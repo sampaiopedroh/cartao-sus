@@ -8,7 +8,7 @@ Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo do sis
 
 | Pasta | Conteúdo | Status |
 |---|---|---|
-| `database/` | `schema.sql`, `seed.sql`, `consultas.sql` | TODO (Fase F1) |
+| `database/` | `schema.sql`, `seed.sql`, `consultas.sql`, DER | Pronto (F1) |
 | `backend/` | API ASP.NET Core (.NET 8) | TODO (Fase F2) |
 | `mobile/` | App Android (Kotlin + Jetpack Compose) | TODO (Fase F7) |
 | `iot/` | Scripts Python dos sensores simulados | TODO (Fase F6) |
@@ -86,6 +86,10 @@ Os scripts em `docker/mysql/init/` só rodam quando o volume é criado. Se você
 | `port is already allocated` | Porta 3306 em uso | Defina `MYSQL_PORT` no `.env` (ex.: `3307`) e rode `docker compose up -d` de novo |
 | `Defina MYSQL_ROOT_PASSWORD` | Senha não preenchida no `.env` | Preencha a variável e rode o comando de novo |
 | Status `unhealthy` após 1 minuto | Senha trocada depois da criação do volume | Rode `docker compose down -v` e suba de novo |
+
+## Banco de dados (F1)
+
+Com o MySQL da F0 rodando, crie as tabelas e carregue os dados de demonstração. Os comandos e a ordem estão em [`database/README.md`](database/README.md). O diagrama do modelo está em [`database/DER.md`](database/DER.md).
 
 ## Segurança
 

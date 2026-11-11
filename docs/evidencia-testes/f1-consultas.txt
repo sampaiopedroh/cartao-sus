@@ -1,0 +1,24 @@
+# Evidência F1 — consultas.sql
+# Data de referência: 2026-11-11 03:02. Q2 e Q7 dependem da janela de 7 dias.
+NOME_COMPLETO	NUMERO_CNS	TIPO_REGISTRO	DESCRICAO	GRAU_SEVERIDADE	DATA_REGISTRO
+Maria Souza Lima	898000000000000	ALERGIA	Penicilina	CRITICO	2024-05-10
+Maria Souza Lima	898000000000000	DOENCA_CRONICA	Diabetes tipo 2	ALTO	2021-02-01
+Maria Souza Lima	898000000000000	CIRURGIA	Colecistectomia (vesícula)	MODERADO	2019-08-15
+NOME_COMPLETO	total_medicoes	glicemia_media_7dias	glicemia_maxima
+Maria Souza Lima	2	125.00	138.00
+NOME_COMPLETO	ultima_sistolica	ultima_diastolica
+Maria Souza Lima	124.00	80.00
+João Pereira Santos	185.00	115.00
+NOME_ESTABELECIMENTO	CODIGO_CNES	BAIRRO	total_acolhimentos	autorizados	rejeitados
+UBS JARDIM COLOMBO	9186492	JARDIM COLOMBO	2	2	0
+UPA VILA PRUDENTE	8530378	JARDIM INDEPENDENCIA	3	0	3
+ID_ALERTA	TIPO_ALERTA	SEVERIDADE	MENSAGEM	CRIADO_EM	NOME_COMPLETO	NUMERO_CNS	email_cidadao
+1	PRESSAO_CRITICA	CRITICA	Alerta de Pressão Crítica: Procure a UPA mais próxima	2026-11-11 06:02:58	João Pereira Santos	182345678901234	joao.pereira@cartaosus.demo
+2	TENTATIVA_INDEVIDA	ALTA	3 tentativas inválidas de leitura detectadas no terminal da UPA	2026-11-11 06:02:58	João Pereira Santos	182345678901234	joao.pereira@cartaosus.demo
+3	RECEITA_VENCENDO	ALTA	Receita médica vence em 14/11/2026	2026-11-11 06:02:58	João Pereira Santos	182345678901234	joao.pereira@cartaosus.demo
+NOME_COMPLETO	qtd_documentos	tipos
+Maria Souza Lima	3	RG, CPF, CARTAO_VACINA
+João Pereira Santos	2	RG, RECEITA_MEDICA
+NOME_COMPLETO	LOGIN	rejeicoes_7dias
+João Pereira Santos	joao.pereira@cartaosus.demo	3
+exit=0

@@ -1,0 +1,10 @@
+# Evidência F1 — testes de integridade (cada INSERT DEVE falhar)
+# Data: 2026-11-11 03:03
+## 1. Dispositivo com dois vínculos (CK_IOT_VINCULO)
+ERROR 3819 (HY000) at line 1: Check constraint 'CK_IOT_VINCULO' is violated.
+## 2. Dispositivo sem vínculo nenhum (CK_IOT_VINCULO)
+ERROR 3819 (HY000) at line 1: Check constraint 'CK_IOT_VINCULO' is violated.
+## 3. Sinal vital com valor zero (CK_SINAL_VALOR_POSITIVO)
+ERROR 3819 (HY000) at line 1: Check constraint 'CK_SINAL_VALOR_POSITIVO' is violated.
+## 4. Segundo cidadão para o mesmo usuário (UNIQUE ID_USUARIO)
+ERROR 1062 (23000) at line 1: Duplicate entry '2' for key 'TB_CIDADAO.ID_USUARIO'

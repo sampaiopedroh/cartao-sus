@@ -1,0 +1,17 @@
+# Evidência F1 — schema.sql (execução 1 e 2)
+# Data: 2026-11-11 03:02
+## Execução 1
+exit=0
+## Execução 2 (reexecução)
+exit=0
+## SHOW TABLES
+Tables_in_cartao_sus
+TB_ALERTA
+TB_CARTEIRA_METADADOS
+TB_CIDADAO
+TB_DISPOSITIVO_IOT
+TB_HISTORICO_CLINICO
+TB_SESSAO_ACESSO
+TB_SINAL_VITAL
+TB_UNIDADE_SAUDE
+TB_USUARIO

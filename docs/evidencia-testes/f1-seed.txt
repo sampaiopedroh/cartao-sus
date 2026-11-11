@@ -1,0 +1,12 @@
+# Evidência F1 — seed.sql
+# Data: 2026-11-11 03:03
+## Contagem por tabela (valor obtido / esperado)
+TB_USUARIO = 4 / 4
+TB_CIDADAO = 2 / 2
+TB_UNIDADE_SAUDE = 16 / 16
+TB_CARTEIRA_METADADOS = 5 / 5
+TB_HISTORICO_CLINICO = 5 / 5
+TB_SINAL_VITAL = 9 / 9
+TB_SESSAO_ACESSO = 5 / 5
+TB_ALERTA = 3 / 3
+TB_DISPOSITIVO_IOT = 0 / 0
