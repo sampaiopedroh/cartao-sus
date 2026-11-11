@@ -45,6 +45,53 @@ Com `SEED_DEMO=true`, na inicialização o backend troca os placeholders `__SERA
 
 É idempotente: se não houver placeholder, não faz nada.
 
+## Endpoints (F2 e F3)
+
+| Método | Rota | Quem chama | Função |
+|---|---|---|---|
+| POST | `/api/v1/auth/cadastro` | público | E1 — cria conta de cidadão (201) |
+| POST | `/api/v1/auth/login` | público | E2 — emite JWT de 30 min (200) |
+| GET | `/api/v1/auth/me` | qualquer usuário | Extra — dados do token |
+| POST | `/api/v1/acolhimento/validar-nfc` | terminal NFC (`X-API-KEY`) | E3 — handshake com TOTP, bloqueio após 3 falhas em 10 min |
+| POST | `/api/v1/telemetria/sinais-vitais` | cidadão (JWT) ou tensiômetro (`X-API-KEY`) | E6 — medição com alerta por limiar |
+| GET | `/api/v1/cidadao/{id}/prontuario` | cidadão (próprio) ou profissional com acolhimento recente | E4 |
+| GET | `/api/v1/cidadao/{id}/sinais-vitais` | mesmo acima | E5 — filtros `tipo`, `de`, `ate` |
+| PUT | `/api/v1/cidadao/{id}/historico/{idHistorico}` | cidadão (próprio) | E7 |
+| GET | `/api/v1/cidadao/{id}/alertas` | mesmo acima | E10 — paginado |
+| PUT | `/api/v1/cidadao/{id}/alertas/{idAlerta}` | cidadão (próprio) | Extra — marca ENTREGUE (204) |
+| GET | `/api/v1/cidadao/{id}/acessos` | mesmo acima | Extra — últimos acessos |
+| POST | `/api/v1/documentos` | cidadão | E8 |
+| DELETE | `/api/v1/documentos/{idDoc}` | cidadão (dono) | E9 (204) |
+| GET | `/api/v1/sus/equipamentos/{cnes}` | cidadão ou profissional | E11 — proxy do CNES |
+| GET | `/api/v1/sus/medicamentos?municipio=&catmat=&page=&size=` | cidadão ou profissional | E12 — proxy do BNAFAR |
+| GET | `/api/v1/sus/medicamentos/catalogo?nome=` | cidadão ou profissional | Extra — catálogo local |
+| GET | `/api/v1/unidades?page=&size=` | cidadão, profissional, admin | E13 |
+| GET | `/api/v1/admin/auditoria?status=&de=&ate=&page=&size=` | admin | E14 |
+
+## Dispositivos IoT (chaves X-API-KEY)
+
+As chaves dos dispositivos são geradas pelo `iot/gerar_chaves.py`, na pasta `cartao-sus/`:
+
+```bash
+python3 iot/gerar_chaves.py
+docker compose exec -T mysql sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" cartao_sus' < database/seed_dispositivos.sql
+```
+
+O script grava as chaves no `.env` e os hashes SHA-256 em `database/seed_dispositivos.sql`. Os dois arquivos ficam fora do git. O banco guarda só o hash.
+
+## Regras de negócio implementadas
+
+- **TOTP (RFC 6238):** HMAC-SHA1, código de 6 dígitos, janela de ±1 passo de 30 s. Código já usado não é aceito de novo (anti-reuso).
+- **Bloqueio:** 3 sessões `REJEITADO` em 10 min bloqueiam novas tentativas do CNS por 10 min (`BLOQUEADO`). A 3ª falha gera alerta `TENTATIVA_INDEVIDA`.
+- **Alertas de telemetria:** sistólica acima de 180 ou diastólica acima de 110 gera `PRESSAO_CRITICA`. Glicemia de 300 ou mais gera `GLICEMIA_CRITICA`.
+- **Consentimento:** profissional só lê o prontuário se houver acolhimento `AUTORIZADO` do cidadão nos últimos 10 min.
+
+## Limitações conhecidas
+
+- **Anti-reuso do TOTP em memória:** vale para uma única instância da API. Com várias instâncias, o controle precisa ir para o banco.
+- **`totalElements` do E12:** a API do BNAFAR não informa o total. O valor devolvido é o número de registros até a página atual.
+- **Horário:** o servidor grava os horários no fuso local da máquina, como nos dados de demonstração.
+
 ## Endpoints da F2
 
 | Método | Rota | Função |

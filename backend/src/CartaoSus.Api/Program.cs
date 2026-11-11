@@ -5,8 +5,10 @@ using CartaoSus.Api.Exceptions;
 using CartaoSus.Api.Middleware;
 using CartaoSus.Api.Models;
 using CartaoSus.Api.Repositories;
+using CartaoSus.Api.Security;
 using CartaoSus.Api.Seed;
 using CartaoSus.Api.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +26,6 @@ if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Length < 32)
 
 var connectionString = builder.Configuration.GetConnectionString("Default") ?? MontarConnectionString(builder.Configuration);
 
-// ---------- Porta padrão ----------
 if (string.IsNullOrWhiteSpace(builder.Configuration["ASPNETCORE_URLS"]))
     builder.WebHost.UseUrls("http://localhost:8080");
 
@@ -33,11 +34,36 @@ builder.Services.AddDbContext<CartaoSusDbContext>(opt =>
     opt.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
 
 builder.Services.AddSingleton<PasswordHasher<Usuario>>();
+builder.Services.AddSingleton<AntiReusoTotp>();
+builder.Services.AddSingleton<CatalogoMedicamentos>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICidadaoRepository, CidadaoRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUnidadeRepository, UnidadeRepository>();
+builder.Services.AddScoped<IDispositivoRepository, DispositivoRepository>();
+builder.Services.AddScoped<ISessaoRepository, SessaoRepository>();
+builder.Services.AddScoped<IAlertaRepository, AlertaRepository>();
+builder.Services.AddScoped<ISinalVitalRepository, SinalVitalRepository>();
+builder.Services.AddScoped<IHistoricoRepository, HistoricoRepository>();
+builder.Services.AddScoped<IDocumentoRepository, DocumentoRepository>();
 
-// ---------- Autenticação JWT ----------
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAcolhimentoService, AcolhimentoService>();
+builder.Services.AddScoped<ITelemetriaService, TelemetriaService>();
+builder.Services.AddScoped<ICidadaoService, CidadaoService>();
+builder.Services.AddScoped<IDocumentoService, DocumentoService>();
+builder.Services.AddScoped<IUnidadeService, UnidadeService>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+builder.Services.AddScoped<ISusService, SusService>();
+
+// Cliente das APIs do SUS: timeout de 5 segundos (SDD 5.3, E11).
+var susBase = builder.Configuration["SUS_API_BASE"] ?? "https://apidadosabertos.saude.gov.br";
+builder.Services.AddHttpClient<SusApiClient>(c =>
+{
+    c.BaseAddress = new Uri(susBase);
+    c.Timeout = TimeSpan.FromSeconds(5);
+});
+
+// ---------- Autenticação: JWT (usuários) e X-API-KEY (dispositivos) ----------
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
     {
@@ -52,7 +78,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
-        // Resposta 401 no mesmo envelope de erro da API (SDD 5.1).
         opt.Events = new JwtBearerEvents
         {
             OnChallenge = async ctx =>
@@ -60,12 +85,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 ctx.HandleResponse();
                 await ErrorHandlingMiddleware.Escrever(ctx.HttpContext, 401, "NAO_AUTORIZADO",
                     "Token ausente, inválido ou expirado.", new Dictionary<string, string>());
+            },
+            OnForbidden = async ctx =>
+            {
+                await ErrorHandlingMiddleware.Escrever(ctx.HttpContext, 403, "SEM_PERMISSAO",
+                    "Perfil sem permissão para este recurso.", new Dictionary<string, string>());
             }
         };
-    });
+    })
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthHandler>(ApiKeyAuthHandler.Scheme, _ => { });
 builder.Services.AddAuthorization();
 
-// ---------- Validação no envelope de erro ----------
+// ---------- Controllers e validação no envelope de erro ----------
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(opt =>
     {
@@ -100,6 +131,13 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Name = "Authorization",
         Description = "Token obtido em POST /api/v1/auth/login"
+    });
+    c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Header,
+        Name = "X-API-KEY",
+        Description = "Chave do dispositivo IoT (terminal NFC ou tensiômetro)"
     });
 });
 

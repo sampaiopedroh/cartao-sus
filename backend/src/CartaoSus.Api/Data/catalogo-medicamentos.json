@@ -1,0 +1,16 @@
+[
+  { "nome": "Insulina asparte", "apresentacao": "100 UI/mL, solução injetável, 3 mL", "catmat": "BR0276234-2" },
+  { "nome": "Dipirona sódica", "apresentacao": "500 mg, comprimido", "catmat": "BR0267203U0042" },
+  { "nome": "Paracetamol", "apresentacao": "500 mg, comprimido", "catmat": "BR0267778U0042" },
+  { "nome": "Metformina, cloridrato", "apresentacao": "850 mg, comprimido", "catmat": "BR0267691U0042" },
+  { "nome": "Losartana potássica", "apresentacao": "50 mg, comprimido", "catmat": "BR0268856U0042" },
+  { "nome": "Amoxicilina", "apresentacao": "500 mg, cápsula", "catmat": "BR0271089U0041" },
+  { "nome": "Omeprazol", "apresentacao": "20 mg, cápsula", "catmat": "BR0267712U0041" },
+  { "nome": "Enalapril, maleato", "apresentacao": "10 mg, comprimido", "catmat": "BR0267651U0042" },
+  { "nome": "Captopril", "apresentacao": "25 mg, comprimido", "catmat": "BR0267613U0042" },
+  { "nome": "Atenolol", "apresentacao": "100 mg, comprimido", "catmat": "BR0267518U0042" },
+  { "nome": "Hidroclorotiazida", "apresentacao": "25 mg, comprimido", "catmat": "BR0267674U0042" },
+  { "nome": "Furosemida", "apresentacao": "40 mg, comprimido", "catmat": "BR0267663U0042" },
+  { "nome": "Sulfato ferroso", "apresentacao": "40 mg de ferro elementar, comprimido", "catmat": "BR0292344U0042" },
+  { "nome": "Glibenclamida", "apresentacao": "5 mg, comprimido", "catmat": "BR0267671U0042" }
+]

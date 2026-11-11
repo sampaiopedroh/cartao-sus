@@ -11,6 +11,10 @@ public static class SegurancaUtils
     public static string HashCpf(string cpf) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(cpf))).ToLowerInvariant();
 
+    // SHA-256 da X-API-KEY (o banco guarda só o hash).
+    public static string HashChave(string chave) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(chave))).ToLowerInvariant();
+
     // Segredo TOTP: 20 bytes aleatórios (160 bits) codificados em Base32 (RFC 4648, sem padding).
     public static string GerarSegredoTotp()
     {
