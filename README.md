@@ -4,7 +4,7 @@ Projeto da disciplina **Global Solution 2026/2 — 3ESOA (FIAP)**, tema CitizenT
 
 Um cartão digital do cidadão para o SUS: consulta de disponibilidade de equipamentos e remédios, carteira de documentos e sinais vitais no aparelho, acolhimento presencial com código TOTP e alertas de saúde gerados por sensores simulados.
 
-Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo). Plano de cada fase: arquivos `F*-plano-de-acao.md` na pasta `gs-2026/`.
+Documento de referência: [`sdd-v3.md`](docs/sdd/sdd-v3.md) (blueprint completo). Plano de cada fase: arquivos `F*-plano-de-acao.md` na pasta `gs-2026/`.
 
 ## Estrutura
 
