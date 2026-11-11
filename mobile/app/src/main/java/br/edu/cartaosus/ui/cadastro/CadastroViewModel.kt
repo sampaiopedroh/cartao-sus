@@ -6,6 +6,7 @@ import br.edu.cartaosus.data.AuthRepository
 import br.edu.cartaosus.data.CadastroRequest
 import br.edu.cartaosus.data.CadastroResponse
 import br.edu.cartaosus.data.Erros
+import br.edu.cartaosus.data.SessionStore
 import br.edu.cartaosus.domain.Validacao
 import br.edu.cartaosus.ui.Acao
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,16 @@ data class FormCadastro(
 // Erros de validação por campo (SDD 7.2: erro por campo, não só no topo).
 data class ErrosCampos(val mapa: Map<String, String> = emptyMap())
 
-class CadastroViewModel(private val repositorio: AuthRepository) : ViewModel() {
+class CadastroViewModel(private val repositorio: AuthRepository, private val sessao: SessionStore) : ViewModel() {
+    private val _salvo = MutableStateFlow(false)
+    val salvo: StateFlow<Boolean> = _salvo.asStateFlow()
+
+    // Guarda o segredo TOTP no aparelho (decisão 1 do plano F8).
+    fun salvarNoAparelho(resposta: CadastroResponse) {
+        sessao.salvarSegredo(resposta.idCidadao, resposta.segredoTotp)
+        _salvo.value = true
+    }
+
     private val _form = MutableStateFlow(FormCadastro())
     val form: StateFlow<FormCadastro> = _form.asStateFlow()
 

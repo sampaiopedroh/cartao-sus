@@ -7,6 +7,7 @@ class AuthRepository(private val api: SusApi, private val sessao: SessionStore) 
         val resposta = api.login(LoginRequest(login, senha))
         sessao.token = resposta.token
         sessao.nome = resposta.nome
+        sessao.idCidadao = resposta.idCidadao ?: -1L
         return resposta
     }
 
@@ -25,6 +26,8 @@ class AuthRepository(private val api: SusApi, private val sessao: SessionStore) 
     }
 
     fun sair() = sessao.limpar()
+
+    fun sessao(): SessionStore = sessao
 
     fun nomeSalvo(): String? = sessao.nome
 }

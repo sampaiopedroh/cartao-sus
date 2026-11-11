@@ -76,6 +76,14 @@ fun CadastroScreen(viewModel: CadastroViewModel, onVoltar: () -> Unit) {
                             Text("Copiar segredo")
                         }
                         Text("Guarde este segredo agora. Ele não será exibido de novo.", style = MaterialTheme.typography.bodySmall)
+                        val salvo by viewModel.salvo.collectAsState()
+                        if (salvo) {
+                            Text("Segredo salvo neste aparelho.", fontWeight = FontWeight.Bold)
+                        } else {
+                            Button(onClick = { viewModel.salvarNoAparelho(sucesso.valor) }, modifier = Modifier.fillMaxWidth()) {
+                                Text("Salvar neste aparelho")
+                            }
+                        }
                         Button(onClick = onVoltar, modifier = Modifier.fillMaxWidth()) { Text("Concluir") }
                     }
                 }
