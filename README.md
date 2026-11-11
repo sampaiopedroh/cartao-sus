@@ -9,7 +9,7 @@ Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo do sis
 | Pasta | Conteúdo | Status |
 |---|---|---|
 | `database/` | `schema.sql`, `seed.sql`, `consultas.sql`, DER | Pronto (F1) |
-| `backend/` | API ASP.NET Core (.NET 8) | TODO (Fase F2) |
+| `backend/` | API ASP.NET Core (.NET 10): cadastro, login e JWT | Pronto (F2) |
 | `mobile/` | App Android (Kotlin + Jetpack Compose) | TODO (Fase F7) |
 | `iot/` | Scripts Python dos sensores simulados | TODO (Fase F6) |
 | `docker/` | Configuração do MySQL em Docker | Pronto |
@@ -40,7 +40,7 @@ Se o comando falhar, abra o Docker Desktop e espere ele iniciar.
 cp .env.example .env
 ```
 
-Abra o `.env` e defina pelo menos `MYSQL_ROOT_PASSWORD` com uma senha de sua escolha. Não coloque essa senha em nenhum outro arquivo.
+Abra o `.env` e defina `MYSQL_ROOT_PASSWORD` e `MYSQL_APP_PASSWORD` com senhas de sua escolha. Não coloque essa senha em nenhum outro arquivo.
 
 **3. Suba o MySQL**
 
@@ -86,6 +86,10 @@ Os scripts em `docker/mysql/init/` só rodam quando o volume é criado. Se você
 | `port is already allocated` | Porta 3306 em uso | Defina `MYSQL_PORT` no `.env` (ex.: `3307`) e rode `docker compose up -d` de novo |
 | `Defina MYSQL_ROOT_PASSWORD` | Senha não preenchida no `.env` | Preencha a variável e rode o comando de novo |
 | Status `unhealthy` após 1 minuto | Senha trocada depois da criação do volume | Rode `docker compose down -v` e suba de novo |
+
+## API (F2)
+
+Com o banco pronto, a API sobe com `dotnet run` na pasta `backend/src/CartaoSus.Api`. Antes, carregue o `.env` e preencha `JWT_SECRET` e `SENHA_DEMO`. O passo a passo, as variáveis e os endpoints estão em [`backend/README.md`](backend/README.md).
 
 ## Banco de dados (F1)
 

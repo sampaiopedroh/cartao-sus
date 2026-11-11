@@ -1,0 +1,47 @@
+# Evidência F2 — endpoints E1, E2, /me e Swagger (curl)
+# Data: 2026-11-11 03:10. Tokens e segredos omitidos da evidência.
+
+## 1. E1 cadastro válido (esperado 201 + segredoTotp uma vez)
+{"idCidadao":4,"segredoTotp":"<omitido>","mensagem":"Conta criada. Guarde o segredo TOTP no app (exibido uma única vez)."}
+HTTP 201
+
+## 2. E1 CPF já cadastrado (esperado 409 CONFLITO)
+{"timestamp":"2026-11-11T06:10:56.7489950Z","status":409,"erro":"CONFLITO","mensagem":"J\u00E1 existe conta com este CPF, CNS ou login.","campos":{}}
+HTTP 409
+
+## 3. E1 senha curta (esperado 400 VALIDACAO com campos.senha)
+{"timestamp":"2026-11-11T06:10:56.7608470Z","status":400,"erro":"VALIDACAO","mensagem":"senha deve ter pelo menos 8 caracteres","campos":{"senha":"senha deve ter pelo menos 8 caracteres"}}
+HTTP 400
+
+## 4. E1 CPF com letras (esperado 400 com campos.cpf)
+{"timestamp":"2026-11-11T06:10:56.7679060Z","status":400,"erro":"VALIDACAO","mensagem":"cpf deve ter 11 d\u00EDgitos","campos":{"cpf":"cpf deve ter 11 d\u00EDgitos"}}
+HTTP 400
+
+## 5. E2 login válido (esperado 200 com token)
+{"token":"<JWT omitido>","tipo":"Bearer","expiraEmMinutos":30,"perfil":"CIDADAO","idCidadao":4,"nome":"Teste Fase Dois"}
+HTTP 200
+
+## 6. E2 senha errada (esperado 401 NAO_AUTORIZADO)
+{"timestamp":"2026-11-11T06:10:56.9645690Z","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Credenciais inv\u00E1lidas.","campos":{}}
+HTTP 401
+
+## 7. E2 usuário inexistente (esperado 401 com a MESMA mensagem)
+{"timestamp":"2026-11-11T06:10:56.9743610Z","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Credenciais inv\u00E1lidas.","campos":{}}
+HTTP 401
+
+## 8. /me sem token (esperado 401 no envelope)
+{"timestamp":"2026-11-11T06:10:56.9830310Z","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Token ausente, inv\u00E1lido ou expirado.","campos":{}}
+HTTP 401
+
+## 9. /me com token válido (esperado 200)
+{"idUsuario":6,"login":"teste.f2@cartaosus.demo","perfil":"CIDADAO","idCidadao":4}
+HTTP 200
+
+## 10. /me com token adulterado (esperado 401)
+{"timestamp":"2026-11-11T06:10:57.0136220Z","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Token ausente, inv\u00E1lido ou expirado.","campos":{}}
+HTTP 401
+
+## 11. Endpoints no Swagger
+POST /api/v1/auth/cadastro
+POST /api/v1/auth/login
+GET /api/v1/auth/me

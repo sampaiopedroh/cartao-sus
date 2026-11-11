@@ -8,6 +8,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Defina MYSQL_ROOT_PASSWORD no arquivo .env}
       MYSQL_DATABASE: cartao_sus
+      MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD:?Defina MYSQL_APP_PASSWORD no arquivo .env}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "${MYSQL_PORT:-3306}:3306"

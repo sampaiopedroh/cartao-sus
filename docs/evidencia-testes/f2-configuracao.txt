@@ -1,0 +1,8 @@
+# Evidência F2 — falha rápida por configuração ausente
+# Executado com: dotnet CartaoSus.Api.dll (Debug, net10.0)
+
+## a) JWT_SECRET ausente (processo encerra com mensagem clara; rc=134 = abort)
+Unhandled exception. System.InvalidOperationException: JWT_SECRET não definida ou menor que 32 caracteres. Defina no arquivo .env (ver .env.example).
+
+## b) SEED_DEMO=true sem SENHA_DEMO (processo encerra; rc=1)
+System.InvalidOperationException: SEED_DEMO=true exige SENHA_DEMO no .env com pelo menos 8 caracteres.
