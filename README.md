@@ -11,7 +11,7 @@ Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo do sis
 | `database/` | `schema.sql`, `seed.sql`, `consultas.sql`, DER | Pronto (F1) |
 | `backend/` | API ASP.NET Core (.NET 10): domínio, JWT, X-API-KEY e testes (unitários, contrato e integração) | Pronto (F2 a F5) |
 | `mobile/` | App Android (Kotlin + Jetpack Compose) | TODO (Fase F7) |
-| `iot/` | Gerador de chaves (F3); scripts dos sensores simulados (F6) | Parcial |
+| `iot/` | Sensores simulados (terminal NFC e tensiômetro) e gerador de chaves | Pronto (F3 e F6) |
 | `docker/` | Configuração do MySQL em Docker | Pronto |
 | `docs/` | Evidências de testes e documentação de API | TODO (Fases F3 e F9) |
 
