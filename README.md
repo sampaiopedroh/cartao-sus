@@ -2,108 +2,114 @@
 
 Projeto da disciplina **Global Solution 2026/2 — 3ESOA (FIAP)**, tema CitizenTech.
 
-Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo do sistema).
+Um cartão digital do cidadão para o SUS: consulta de disponibilidade de equipamentos e remédios, carteira de documentos e sinais vitais no aparelho, acolhimento presencial com código TOTP e alertas de saúde gerados por sensores simulados.
 
-## Estrutura do repositório
+Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo). Plano de cada fase: arquivos `F*-plano-de-acao.md` na pasta `gs-2026/`.
 
-| Pasta | Conteúdo | Status |
+## Estrutura
+
+| Pasta | Conteúdo | Leia mais |
 |---|---|---|
-| `database/` | `schema.sql`, `seed.sql`, `consultas.sql`, DER | Pronto (F1) |
-| `backend/` | API ASP.NET Core (.NET 10): domínio, JWT, X-API-KEY e testes (unitários, contrato e integração) | Pronto (F2 a F5) |
-| `mobile/` | App Android (Kotlin + Jetpack Compose) | TODO (Fase F7) |
-| `iot/` | Sensores simulados (terminal NFC e tensiômetro) e gerador de chaves | Pronto (F3 e F6) |
-| `docker/` | Configuração do MySQL em Docker | Pronto |
-| `docs/` | Evidências de testes (`docs/evidencia-testes/RELATORIO.md`), coleção Postman e Swagger | Pronto (F9) |
+| `database/` | Schema, carga inicial, 7 consultas e DER | [database/README.md](database/README.md) |
+| `backend/` | API ASP.NET Core (.NET 10) com testes unitários, de contrato e de integração | [backend/README.md](backend/README.md) |
+| `mobile/` | App Android (Kotlin, Jetpack Compose) | [mobile/README.md](mobile/README.md) |
+| `iot/` | Sensores simulados (terminal NFC e tensiômetro) e gerador de chaves | [iot/README.md](iot/README.md) |
+| `docker/` | MySQL 8 em Docker | — |
+| `docs/` | Evidências dos testes, relatório consolidado, coleção Postman e Swagger | [docs/evidencia-testes/README.md](docs/evidencia-testes/README.md) |
 
 ## Pré-requisitos
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (ou Docker Engine com Compose)
-- Git
+- **Docker** (Docker Desktop ou Docker Engine com Compose): banco de dados.
+- **.NET SDK 10** e **Python 3.11+**: API, testes e sensores.
+- **JDK 17+ e Android SDK (plataforma 36)**, ou o Android Studio: aplicativo. Opcional se você só quiser rodar a API.
 
-Outras ferramentas (.NET 8, JDK, Android Studio, Python) serão exigidas nas fases que as usam, e cada uma será listada aqui quando entrar.
+## Como executar (ordem completa)
 
-## Como executar (F0 — banco de dados)
+Todos os comandos rodam na pasta `cartao-sus/`, salvo quando indicado.
 
-Todos os comandos rodam dentro da pasta `cartao-sus/`.
-
-**1. Confirme que o Docker está rodando**
-
-```bash
-docker info
-```
-
-Se o comando falhar, abra o Docker Desktop e espere ele iniciar.
-
-**2. Crie o arquivo de variáveis**
+**1. Crie o arquivo de variáveis**
 
 ```bash
 cp .env.example .env
 ```
 
-Abra o `.env` e defina `MYSQL_ROOT_PASSWORD` e `MYSQL_APP_PASSWORD` com senhas de sua escolha. Não coloque essa senha em nenhum outro arquivo.
+Preencha no `.env`: `MYSQL_ROOT_PASSWORD`, `MYSQL_APP_PASSWORD`, `JWT_SECRET` (32 caracteres ou mais) e `SENHA_DEMO` (8 caracteres ou mais). Os valores são seus, não vão para o git.
 
-**3. Suba o MySQL**
+**2. Suba o banco**
 
 ```bash
 docker compose up -d
 ```
 
-**4. Espere o banco ficar pronto**
+Espere a coluna `STATUS` mostrar `healthy` em `docker compose ps` (cerca de 30 segundos).
+
+**3. Crie as tabelas e os dados de demonstração**
 
 ```bash
-docker compose ps
+docker compose exec -T mysql sh -c 'mysql --default-character-set=utf8mb4 -uroot -p"$MYSQL_ROOT_PASSWORD" cartao_sus' < database/schema.sql
+docker compose exec -T mysql sh -c 'mysql --default-character-set=utf8mb4 -uroot -p"$MYSQL_ROOT_PASSWORD" cartao_sus' < database/seed.sql
 ```
 
-A coluna `STATUS` deve mostrar `healthy`. Pode levar cerca de 30 segundos na primeira vez.
-
-**5. Confira os bancos criados**
+**4. Gere as chaves dos sensores e cadastre os dispositivos**
 
 ```bash
-docker compose exec mysql sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -e "SHOW DATABASES;"'
+python3 iot/gerar_chaves.py
+docker compose exec -T mysql sh -c 'mysql --default-character-set=utf8mb4 -uroot -p"$MYSQL_ROOT_PASSWORD" cartao_sus' < database/seed_dispositivos.sql
 ```
 
-Devem aparecer `cartao_sus` e `cartao_sus_test`.
-
-**Parar o ambiente** (mantém os dados):
+**5. Rode a API**
 
 ```bash
-docker compose down
+set -a && . ./.env && set +a
+cd backend/src/CartaoSus.Api
+dotnet run
 ```
 
-**Recomeçar do zero** (apaga todos os dados do banco):
+Na primeira execução, o console mostra os **segredos TOTP** dos cidadãos de demonstração. Guarde-os: são necessários para o código do aplicativo (ver o README do mobile). A API responde em `http://localhost:8080`, e o Swagger em `http://localhost:8080/swagger`.
+
+**6. Rode os testes** (em outro terminal, sem precisar do banco para os dois primeiros)
 
 ```bash
-docker compose down -v
+cd backend
+dotnet test CartaoSus.slnx --filter "Category!=Integracao"   # unitários e de contrato
+sh tests/run-integration.sh                                    # integração (precisa do MySQL no ar)
 ```
 
-Os scripts em `docker/mysql/init/` só rodam quando o volume é criado. Se você trocar algo nesses scripts, use `docker compose down -v` antes de subir de novo.
+**7. Rode os sensores** (com a API no ar)
+
+```bash
+python3 -m venv iot/.venv && iot/.venv/bin/pip install -r iot/requirements.txt
+iot/.venv/bin/python iot/tensiometro.py --cenario demo
+```
+
+**8. Rode o aplicativo** (opcional): abra a pasta `mobile/` no Android Studio ou rode `./gradlew installDebug`, com um emulador iniciado. Detalhes em [mobile/README.md](mobile/README.md).
+
+**Parar o ambiente** (mantém os dados): `docker compose down`. **Recomeçar do zero** (apaga o banco): `docker compose down -v`, e repita os passos 2 a 4.
 
 ### Problemas comuns
 
 | Sintoma | Causa provável | Solução |
 |---|---|---|
-| `Cannot connect to the Docker daemon` | Docker Desktop parado | Abra o Docker Desktop e aguarde |
-| `port is already allocated` | Porta 3306 em uso | Defina `MYSQL_PORT` no `.env` (ex.: `3307`) e rode `docker compose up -d` de novo |
-| `Defina MYSQL_ROOT_PASSWORD` | Senha não preenchida no `.env` | Preencha a variável e rode o comando de novo |
-| Status `unhealthy` após 1 minuto | Senha trocada depois da criação do volume | Rode `docker compose down -v` e suba de novo |
-
-## API (F2)
-
-Com o banco pronto, a API sobe com `dotnet run` na pasta `backend/src/CartaoSus.Api`. Antes, carregue o `.env` e preencha `JWT_SECRET` e `SENHA_DEMO`. O passo a passo, as variáveis e os endpoints estão em [`backend/README.md`](backend/README.md).
-
-## Banco de dados (F1)
-
-Com o MySQL da F0 rodando, crie as tabelas e carregue os dados de demonstração. Os comandos e a ordem estão em [`database/README.md`](database/README.md). O diagrama do modelo está em [`database/DER.md`](database/DER.md).
+| `Cannot connect to the Docker daemon` | Docker parado | Abra o Docker Desktop |
+| `port is already allocated` | Porta 3306 em uso | Defina `MYSQL_PORT` no `.env` e suba de novo |
+| `JWT_SECRET não definida` ao rodar a API | Variáveis não carregadas | Rode o `set -a && . ./.env && set +a` antes do `dotnet run` |
+| Código TOTP recusado no terminal | Relógio desalinhado ou código já usado | Gere um código novo; o código vale por 30 segundos |
+| Aplicativo não conecta | API fora do ar ou emulador sem `10.0.2.2` | Suba a API; use um emulador Android |
 
 ## Segurança
 
-- Nenhum segredo é versionado. Senhas, chaves e segredos ficam no `.env`, que está no `.gitignore`.
-- O arquivo `.env.example` tem apenas os nomes das variáveis, sem valores reais.
+- Nenhum segredo é versionado: senhas, chaves e segredos ficam no `.env` e nos arquivos gerados, todos no `.gitignore`.
+- O `.env.example` traz apenas os nomes das variáveis.
+- O segredo TOTP no aparelho fica sem criptografia; a limitação está registrada no SDD (seção 7.4).
 
 ## Declaração de uso de IA
 
-TODO — preencher com as ferramentas usadas e para quê, conforme a regra da disciplina (ainda não definida pelo professor).
+*Em preparação. Será preenchida com as ferramentas usadas e para quê, após confirmação do grupo.*
 
 ## Vídeo pitch
 
-TODO (Fase F10) — link público do vídeo, testado em aba anônima.
+*Em preparação. O link público será incluído aqui e no arquivo `.txt` de entrega.*
+
+## Resultados dos testes
+
+Consolidados em [docs/evidencia-testes/RELATORIO.md](docs/evidencia-testes/RELATORIO.md): 76 casos aprovados (12 unitários, 8 de contrato, 12 de integração, 14 manuais e 30 do aplicativo).
