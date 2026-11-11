@@ -116,7 +116,20 @@ dotnet test CartaoSus.slnx
 
 Resultado atual: 23 de 23. Evidência em `docs/evidencia-testes/f4-resumo.md`.
 
-Os testes de integração contra o MySQL ficam para a F5. A evidência da F2 e da F3 está em `docs/evidencia-testes/` (`f2-curl.txt`, `f3-testes.txt`).
+### Testes de integração (F5)
+
+Precisam do MySQL do `docker compose` no ar (`docker compose up -d` na pasta `cartao-sus/`) e do `.env` preenchido:
+
+```bash
+cd cartao-sus
+sh backend/tests/run-integration.sh
+```
+
+O script confere se o MySQL está `healthy`, carrega o `.env` e roda os testes com a categoria `Integracao` (IT-01 a IT-10). Cada teste recria o banco `cartao_sus_test` a partir de `schema.sql` e `seed.sql`, usando o usuário root **só** nessa preparação. A API roda com `cartao_app`. O SUS nunca é chamado: o proxy usa uma resposta simulada.
+
+Para rodar só os unitários e de contrato, sem banco: `dotnet test CartaoSus.slnx --filter "Category!=Integracao"`.
+
+Evidência em `docs/evidencia-testes/f5-resumo.md`. A coleção do Postman está em `docs/postman-collection.json` (exportada do Swagger).
 
 ## Observação sobre dependências
 

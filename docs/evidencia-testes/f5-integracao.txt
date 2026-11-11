@@ -1,0 +1,176 @@
+# Evidência F5 — testes de integração (IT-01 a IT-10)
+# Execução: backend/tests/run-integration.sh (MySQL do docker compose, banco cartao_sus_test).
+# Data: 2026-11-11 09:03
+
+Test run for /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/tests/CartaoSus.Tests/bin/Debug/net10.0/CartaoSus.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.9)
+[xUnit.net 00:00:00.04]   Discovering: CartaoSus.Tests
+[xUnit.net 00:00:00.05]   Discovered:  CartaoSus.Tests
+[xUnit.net 00:00:00.06]   Starting:    CartaoSus.Tests
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+  Passed IT-10a rota protegida sem token retorna 401 [56 ms]
+  Passed IT-10b cidadão em rota de admin retorna 403 [425 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+  Passed IT-04 três falhas bloqueiam a quarta tentativa e geram alerta [168 ms]
+  Passed IT-03 handshake com TOTP válido grava sessão AUTORIZADA [37 ms]
+  Passed IT-07 documento criado aparece no handshake e some após a exclusão [84 ms]
+  Passed IT-05 tensiômetro acima do limiar grava alerta e origem IOT [17 ms]
+  Passed IT-06 medição enviada pelo cidadão grava origem APP [46 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: System.Net.Http.HttpClient.SusApiClient.LogicalHandler[100]
+      Start processing HTTP request GET https://sus.teste.invalido/assistencia-a-saude/cnes-equipamentos?*
+info: System.Net.Http.HttpClient.SusApiClient.ClientHandler[100]
+      Sending HTTP request GET https://sus.teste.invalido/assistencia-a-saude/cnes-equipamentos?*
+info: System.Net.Http.HttpClient.SusApiClient.ClientHandler[101]
+      Received HTTP response headers after 0.1077ms - 200
+info: System.Net.Http.HttpClient.SusApiClient.LogicalHandler[101]
+      End processing HTTP request after 3.1941ms - 200
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: System.Net.Http.HttpClient.SusApiClient.LogicalHandler[100]
+      Start processing HTTP request GET https://sus.teste.invalido/assistencia-a-saude/cnes-equipamentos?*
+info: System.Net.Http.HttpClient.SusApiClient.ClientHandler[100]
+      Sending HTTP request GET https://sus.teste.invalido/assistencia-a-saude/cnes-equipamentos?*
+info: System.Net.Http.HttpClient.SusApiClient.ClientHandler[101]
+      Received HTTP response headers after 0.0298ms - 503
+info: System.Net.Http.HttpClient.SusApiClient.LogicalHandler[101]
+      End processing HTTP request after 0.0636ms - 503
+warn: CartaoSus.Api.Services.SusApiClient[0]
+      Falha na API do SUS (tentativa 1): Status 503
+info: System.Net.Http.HttpClient.SusApiClient.LogicalHandler[100]
+      Start processing HTTP request GET https://sus.teste.invalido/assistencia-a-saude/cnes-equipamentos?*
+info: System.Net.Http.HttpClient.SusApiClient.ClientHandler[100]
+      Sending HTTP request GET https://sus.teste.invalido/assistencia-a-saude/cnes-equipamentos?*
+info: System.Net.Http.HttpClient.SusApiClient.ClientHandler[101]
+      Received HTTP response headers after 0.0005ms - 503
+info: System.Net.Http.HttpClient.SusApiClient.LogicalHandler[101]
+      End processing HTTP request after 0.0231ms - 503
+warn: CartaoSus.Api.Services.SusApiClient[0]
+      Falha na API do SUS (tentativa 2): Status 503
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:8080
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/src/CartaoSus.Api
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+[xUnit.net 00:00:04.21]   Finished:    CartaoSus.Tests
+  Passed IT-09 admin lista rejeições paginadas, batendo com o banco [68 ms]
+  Passed IT-08a proxy do CNES normaliza a resposta do SUS [51 ms]
+  Passed IT-08b SUS indisponível (503) vira 502 FALHA_ORIGEM [41 ms]
+  Passed IT-02 usuário inativo não consegue logar [12 ms]
+  Passed IT-01 cadastro, login e prontuário do novo cidadão [108 ms]
+
+Test Run Successful.
+Total tests: 12
+     Passed: 12
+ Total time: 4,4633 Seconds

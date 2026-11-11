@@ -1,0 +1,4 @@
+Test run for /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/tests/CartaoSus.Tests/bin/Debug/net10.0/CartaoSus.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    23, Skipped:     0, Total:    23, Duration: 259 ms - CartaoSus.Tests.dll (net10.0)
