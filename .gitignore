@@ -1,0 +1,34 @@
+# --- Segredos (SDD 8.5) ---
+.env
+.env.*
+!.env.example
+database/seed_dispositivos.sql
+
+# --- .NET (backend) ---
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+# --- Android (mobile) ---
+build/
+.gradle/
+local.properties
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# --- Python (iot) ---
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# --- Sistema e editores ---
+.DS_Store
+Thumbs.db
+.vscode/
