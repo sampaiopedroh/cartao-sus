@@ -1,0 +1,9 @@
+# MT-10 — Acesso ao prontuário de outro cidadão
+# Data: 2026-11-11 11:01:24
+# Resultado: PASS
+
+## Maria lendo o prontuário do João
+esperado: 403 SEM_PERMISSAO
+obtido: HTTP 403
+{"timestamp":"2026-11-11T11:01:24.3171410-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Acesso negado aos dados de outro cidad\u00E3o.","campos":{}}
+

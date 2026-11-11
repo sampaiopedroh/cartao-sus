@@ -1,0 +1,9 @@
+# MT-12 — Consulta de medicamento no BNAFAR
+# Data: 2026-11-11 11:02:00
+# Resultado: PASS
+
+## Estoque de insulina asparte em São Paulo
+esperado: 200 com lista normalizada
+obtido: HTTP 200
+{"content":[{"nome":"Insulina asparte","catmat":"BR0276234-2","municipio":"SAO PAULO","estabelecimento":"SMS SP GABINETE","quantidade":186.0,"dataPosicao":"2026-11-08","latitude":-23.5635809,"longitude":-46.6372444},{"nome":"Insulina asparte","catmat":"BR0276234-2","municipio":"SAO PAULO","estabelecimento":"SMS SP GABINETE","quantidade":65.0,"dataPosicao":"2026-11-08","latitude":-23.5635809,"longi
+

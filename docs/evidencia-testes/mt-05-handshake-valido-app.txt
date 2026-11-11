@@ -1,0 +1,6 @@
+# MT-05 — Handshake com TOTP válido (app)
+# Data: 2026-11-11 11:04
+# Resultado: PASS
+
+Código exibido no app (tela Token) enviado ao terminal NFC:
+[11:04:34] tentativa 1 -> HTTP 200: {'status': 'AUTORIZADO', 'mensagem': 'Identificação e autorização validadas com sucesso.', 'paciente': {'nomeCompleto': 'Maria Souza Lima', 'cns': '898000000000000', 'documentosDisponiveis': ['RG', 'CPF', 'CARTAO_VACINA'], 'alertasCriticos': [{'tipo': 'ALERGIA

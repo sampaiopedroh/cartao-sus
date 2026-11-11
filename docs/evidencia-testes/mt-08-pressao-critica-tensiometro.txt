@@ -1,0 +1,16 @@
+# MT-08 — Pressão crítica pelo tensiômetro
+# Data: 2026-11-11 11:01:24
+# Resultado: PASS
+
+-- leitura normal: 120/80 mmHg (limiar de crise: 180/110)
+[11:01:20] PRESSAO_SISTOLICA -> HTTP 201: {'idSinal': 10, 'alertaDisparado': False, 'alerta': None}
+[11:01:20] PRESSAO_DIASTOLICA -> HTTP 201: {'idSinal': 11, 'alertaDisparado': False, 'alerta': None}
+-- leitura elevada: 130/85 mmHg (limiar de crise: 180/110)
+[11:01:22] PRESSAO_SISTOLICA -> HTTP 201: {'idSinal': 12, 'alertaDisparado': False, 'alerta': None}
+[11:01:22] PRESSAO_DIASTOLICA -> HTTP 201: {'idSinal': 13, 'alertaDisparado': False, 'alerta': None}
+-- leitura crise hipertensiva: 185/115 mmHg (limiar de crise: 180/110)
+[11:01:23] PRESSAO_SISTOLICA -> HTTP 201: {'idSinal': 14, 'alertaDisparado': True, 'alerta': {'tipo': 'PRESSAO_CRITICA', 'mensagem': 'Alerta de Pressão Crítica: Procure a UPA mais próxima'}}
+    ALERTA: Alerta de Pressão Crítica: Procure a UPA mais próxima
+[11:01:23] PRESSAO_DIASTOLICA -> HTTP 201: {'idSinal': 15, 'alertaDisparado': True, 'alerta': {'tipo': 'PRESSAO_CRITICA', 'mensagem': 'Alerta de Pressão Crítica: Procure a UPA mais próxima'}}
+    ALERTA: Alerta de Pressão Crítica: Procure a UPA mais próxima
+

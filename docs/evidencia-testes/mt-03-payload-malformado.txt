@@ -1,0 +1,9 @@
+# MT-03 — Payload malformado
+# Data: 2026-11-11 11:01:20
+# Resultado: PASS
+
+## Login sem o campo senha
+esperado: 400 VALIDACAO com campos.senha
+obtido: HTTP 400
+{"timestamp":"2026-11-11T11:01:20.0862790-03:00","status":400,"erro":"VALIDACAO","mensagem":"senha \u00E9 obrigat\u00F3ria","campos":{"senha":"senha \u00E9 obrigat\u00F3ria"}}
+

@@ -129,6 +129,10 @@ fun NavegacaoApp() {
                     onAbrirToken = { navegador.navigate(Rotas.TOKEN) { launchSingleTop = true } },
                     onAbrirConsulta = { navegador.navigate(Rotas.CONSULTA) { launchSingleTop = true } },
                     onAbrirSinais = { navegador.navigate(Rotas.SINAIS) { launchSingleTop = true } },
+                    onSair = {
+                        app.repositorio.sair()
+                        navegador.navigate(Rotas.LOGIN) { popUpTo(0) }
+                    },
                 )
             }
 

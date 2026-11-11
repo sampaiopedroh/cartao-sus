@@ -1,0 +1,9 @@
+# MT-01 — Login válido
+# Data: 2026-11-11 11:01:20
+# Resultado: PASS
+
+## Login válido (Maria)
+esperado: 200 com token e perfil CIDADAO
+obtido: HTTP 200
+{"token":"<omitido>","tipo":"Bearer","expiraEmMinutos":30,"perfil":"CIDADAO","idCidadao":1,"nome":"Maria Souza Lima"}
+

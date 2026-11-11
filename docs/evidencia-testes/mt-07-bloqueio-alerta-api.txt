@@ -1,0 +1,21 @@
+# MT-07 — Três falhas, bloqueio e alerta (API)
+# Data: 2026-11-11 11:01:20
+# Resultado: PASS
+
+## Falha 2 (código errado)
+esperado: 403 TOKEN_INVALIDO
+obtido: HTTP 403
+{"timestamp":"2026-11-11T11:01:20.5937330-03:00","status":403,"erro":"TOKEN_INVALIDO","mensagem":"Token expirado ou inv\u00E1lido.","campos":{}}
+
+## Falha 3 (código errado): gera alerta TENTATIVA_INDEVIDA
+esperado: 403 TOKEN_INVALIDO
+obtido: HTTP 403
+{"timestamp":"2026-11-11T11:01:20.6147240-03:00","status":403,"erro":"TOKEN_INVALIDO","mensagem":"Token expirado ou inv\u00E1lido.","campos":{}}
+
+## Quarta tentativa com código certo
+esperado: 403 BLOQUEADO
+obtido: HTTP 403
+{"timestamp":"2026-11-11T11:01:20.6211940-03:00","status":403,"erro":"BLOQUEADO","mensagem":"Acolhimento bloqueado por 10 min ap\u00F3s 3 falhas.","campos":{}}
+
+Alertas TENTATIVA_INDEVIDA do João (antes do caso): 1
+Alertas TENTATIVA_INDEVIDA do João (depois): 2

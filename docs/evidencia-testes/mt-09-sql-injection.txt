@@ -1,0 +1,19 @@
+# MT-09 — Tentativa de SQL injection
+# Data: 2026-11-11 11:01:24
+# Resultado: PASS
+
+## Injeção no id do prontuário
+esperado: 404 ou 400 e nenhum dado
+obtido: HTTP 404
+
+
+## Injeção em parâmetro de tipo (sinais)
+esperado: sem dados de outro paciente, 200 vazio ou 400
+obtido: HTTP 200
+{"tipo":"GLICEMIA' OR '1'='1","medicoes":[],"resumo":{"media":null,"minima":null,"maxima":null,"total":0}}
+
+## Injeção no CNES de equipamentos
+esperado: 400 VALIDACAO
+obtido: HTTP 400
+{"timestamp":"2026-11-11T11:01:24.2734910-03:00","status":400,"erro":"VALIDACAO","mensagem":"Par\u00E2metros inv\u00E1lidos.","campos":{"cnes":"deve ter 7 d\u00EDgitos"}}
+

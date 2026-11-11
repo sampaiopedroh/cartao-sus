@@ -1,0 +1,9 @@
+# MT-04 — Cadastro duplicado
+# Data: 2026-11-11 11:01:20
+# Resultado: PASS
+
+## Cadastro com CNS já existente (898000000000000)
+esperado: 409 CONFLITO
+obtido: HTTP 409
+{"timestamp":"2026-11-11T11:01:20.1055910-03:00","status":409,"erro":"CONFLITO","mensagem":"J\u00E1 existe conta com este CPF, CNS ou login.","campos":{}}
+

@@ -2,7 +2,7 @@
   "info": {
     "name": "Cartão SUS Inteligente API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Exportada do Swagger da API (F5). Variáveis: baseUrl, token, chaveDispositivo."
+    "description": "Coleção da API Cartão SUS Inteligente (F9). Exemplos de corpo e testes automáticos de status. Antes de rodar: defina senhaDemo (SENHA_DEMO do .env), chaveDispositivo (IOT_KEY_* do .env) quando usar X-API-KEY, e rode o login primeiro para preencher token. Ordem sugerida: login, me, prontuário, documentos."
   },
   "variable": [
     {
@@ -16,6 +16,14 @@
     {
       "key": "chaveDispositivo",
       "value": ""
+    },
+    {
+      "key": "senhaDemo",
+      "value": "<defina a SENHA_DEMO do seu .env>"
+    },
+    {
+      "key": "codigoTotp",
+      "value": "<código do app ou do gerador>"
     }
   ],
   "item": [
@@ -43,9 +51,26 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{}"
+          "raw": "{\n  \"numeroCns\": \"898000000000000\",\n  \"codigoCnesUnidade\": \"9186492\",\n  \"tokenRotativo\": \"{{codigoTotp}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/admin/auditoria",
@@ -63,8 +88,20 @@
             "admin",
             "auditoria"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/auth/cadastro",
@@ -90,9 +127,27 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{}"
+          "raw": "{\n  \"login\": \"novo.postman@cartaosus.demo\",\n  \"senha\": \"SenhaForte123\",\n  \"cpf\": \"52998224725\",\n  \"numeroCns\": \"700000000000099\",\n  \"nomeCompleto\": \"Cidadao Postman\",\n  \"dataNascimento\": \"1990-05-20\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "pm.test('segredo TOTP devolvido uma vez', () => pm.expect(pm.response.json().segredoTotp).to.be.a('string'));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/auth/login",
@@ -118,9 +173,27 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{}"
+          "raw": "{\n  \"login\": \"maria.souza@cartaosus.demo\",\n  \"senha\": \"{{senhaDemo}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('token', pm.response.json().token);"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/auth/me",
@@ -138,8 +211,20 @@
             "auth",
             "me"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/cidadao/{id}/prontuario",
@@ -158,8 +243,20 @@
             "{id}",
             "prontuario"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/cidadao/{id}/sinais-vitais",
@@ -178,8 +275,20 @@
             "{id}",
             "sinais-vitais"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/cidadao/{id}/historico/{idHistorico}",
@@ -207,9 +316,26 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{}"
+          "raw": "{\n  \"descricao\": \"Penicilina (confirmado 2026)\",\n  \"grauSeveridade\": \"CRITICO\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/cidadao/{id}/alertas",
@@ -228,8 +354,20 @@
             "{id}",
             "alertas"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/cidadao/{id}/alertas/{idAlerta}",
@@ -258,8 +396,20 @@
         "body": {
           "mode": "raw",
           "raw": "{}"
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 204', () => pm.response.to.have.status(204));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/cidadao/{id}/acessos",
@@ -278,8 +428,20 @@
             "{id}",
             "acessos"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/documentos",
@@ -304,9 +466,26 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{}"
+          "raw": "{\n  \"tipoDocumento\": \"LAUDO\",\n  \"nomeArquivo\": \"laudo.pdf\",\n  \"hashIntegridade\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/documentos/{idDoc}",
@@ -324,8 +503,20 @@
             "documentos",
             "{idDoc}"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 204', () => pm.response.to.have.status(204));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/sus/equipamentos/{cnes}",
@@ -344,8 +535,20 @@
             "equipamentos",
             "{cnes}"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/sus/medicamentos",
@@ -363,8 +566,20 @@
             "sus",
             "medicamentos"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/sus/medicamentos/catalogo",
@@ -383,8 +598,20 @@
             "medicamentos",
             "catalogo"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/telemetria/sinais-vitais",
@@ -410,9 +637,26 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{}"
+          "raw": "{\n  \"tipoMedicao\": \"PRESSAO_SISTOLICA\",\n  \"valor\": 185.0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));"
+            ]
+          }
         }
-      }
+      ]
     },
     {
       "name": "/api/v1/unidades",
@@ -429,8 +673,20 @@
             "v1",
             "unidades"
           ]
+        },
+        "description": ""
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
         }
-      }
+      ]
     }
   ]
 }

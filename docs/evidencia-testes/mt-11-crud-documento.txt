@@ -1,0 +1,24 @@
+# MT-11 — CRUD de documento na carteira
+# Data: 2026-11-11 11:02:00
+# Resultado: PASS
+
+## Criar documento LAUDO (Maria)
+esperado: 201
+obtido: HTTP 201
+{"idDocumento":6,"mensagem":"Documento registrado na carteira."}
+
+## Handshake (Maria) lista o LAUDO
+esperado: 200 com LAUDO em documentosDisponiveis
+obtido: HTTP 200
+{"status":"AUTORIZADO","mensagem":"Identificação e autorização validadas com sucesso.","paciente":{"nomeCompleto":"Maria Souza Lima","cns":"898000000000000","documentosDisponiveis":["RG","CPF","CARTAO_VACINA","LAUDO"],"alertasCriticos":[{"tipo":"ALERGIA","substancia":"Penicilina","severidade":"CRITICO"}],"ultimasMedicoes":{"glicemia":112.00,"pressaoArterial":"124/80","dataRegistro":"2026-11-09T07:
+
+## Excluir o documento
+esperado: 204
+obtido: HTTP 204
+
+
+## Handshake seguinte (nova janela) não lista mais o LAUDO
+esperado: 200 sem LAUDO
+obtido: HTTP 200
+{"status":"AUTORIZADO","mensagem":"Identificação e autorização validadas com sucesso.","paciente":{"nomeCompleto":"Maria Souza Lima","cns":"898000000000000","documentosDisponiveis":["RG","CPF","CARTAO_VACINA"],"alertasCriticos":[{"tipo":"ALERGIA","substancia":"Penicilina","severidade":"CRITICO"}],"ultimasMedicoes":{"glicemia":112.00,"pressaoArterial":"124/80","dataRegistro":"2026-11-09T07:15:00"}}
+

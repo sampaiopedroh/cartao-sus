@@ -72,6 +72,7 @@ fun DashboardScreen(
     onAbrirToken: () -> Unit,
     onAbrirConsulta: () -> Unit,
     onAbrirSinais: () -> Unit,
+    onSair: () -> Unit,
 ) {
     val estado by viewModel.estado.collectAsState()
 
@@ -82,6 +83,7 @@ fun DashboardScreen(
             Button(onClick = onAbrirConsulta) { Text("Consulta SUS") }
             Button(onClick = onAbrirSinais) { Text("Sinais") }
         }
+        TextButton(onClick = onSair) { Text("Sair") }
         Text("Alertas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         ConteudoEstado(
             estado = estado,

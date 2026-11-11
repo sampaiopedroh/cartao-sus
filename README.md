@@ -13,7 +13,7 @@ Documento de referência: [`sdd-v3.md`](../sdd-v3.md) (blueprint completo do sis
 | `mobile/` | App Android (Kotlin + Jetpack Compose) | TODO (Fase F7) |
 | `iot/` | Sensores simulados (terminal NFC e tensiômetro) e gerador de chaves | Pronto (F3 e F6) |
 | `docker/` | Configuração do MySQL em Docker | Pronto |
-| `docs/` | Evidências de testes e documentação de API | TODO (Fases F3 e F9) |
+| `docs/` | Evidências de testes (`docs/evidencia-testes/RELATORIO.md`), coleção Postman e Swagger | Pronto (F9) |
 
 ## Pré-requisitos
 

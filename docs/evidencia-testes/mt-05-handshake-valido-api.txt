@@ -1,0 +1,10 @@
+# MT-05 — Handshake com TOTP válido (API)
+# Data: 2026-11-11 11:01:20
+# Resultado: PASS
+
+## Handshake com código TOTP válido (Maria, UBS)
+esperado: 200 AUTORIZADO
+obtido: HTTP 200
+{"status":"AUTORIZADO","mensagem":"Identificação e autorização validadas com sucesso.","paciente":{"nomeCompleto":"Maria Souza Lima","cns":"898000000000000","documentosDisponiveis":["RG","CPF","CARTAO_VACINA"],"alertasCriticos":[{"tipo":"ALERGIA","substancia":"Penicilina","severidade":"CRITICO"}],"ultimasMedicoes":{"glicemia":112.00,"pressaoArterial":"124/80","dataRegistro":"2026-11-09T07:15:00"}}
+
+Sessão gravada no banco: 1 AUTORIZADO
