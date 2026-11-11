@@ -1,0 +1,35 @@
+Test run for /Users/pedrosampaio/Desktop/FIAP/gs-2026/cartao-sus/backend/tests/CartaoSus.Tests/bin/Debug/net10.0/CartaoSus.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.9)
+[xUnit.net 00:00:00.03]   Discovering: CartaoSus.Tests
+[xUnit.net 00:00:00.04]   Discovered:  CartaoSus.Tests
+[xUnit.net 00:00:00.05]   Starting:    CartaoSus.Tests
+  Passed UT-02 código de 5 minutos atrás é recusado [2 ms]
+  Passed Código com tamanho errado é recusado sem calcular HMAC [< 1 ms]
+  Passed UT-03 mesmo código usado duas vezes é recusado na segunda [2 ms]
+  Passed UT-01 código válido no passo atual é aceito [1 ms]
+  Passed CT-06 validar NFC 403: envelope com TOKEN_INVALIDO [21 ms]
+  Passed UT-11 excluir documento de outro cidadão lança SemPermissaoException [26 ms]
+  Passed CT-05 validar NFC 200: paciente com alertas e últimas medições [6 ms]
+  Passed CT-01 login 200: formato do token e do perfil [1 ms]
+  Passed CT-07 telemetria 201: alertaDisparado e alerta [1 ms]
+  Passed UT-12 API do SUS fora do ar (503) vira FalhaOrigemException [31 ms]
+  Passed CT-08 excluir documento 204: sem corpo de resposta [2 ms]
+  Passed UT-05 pressão normal de 120 não gera alerta [34 ms]
+  Passed CT-02 login 401: envelope de erro com NAO_AUTORIZADO [< 1 ms]
+  Passed Terminal de outra unidade é recusado [24 ms]
+  Passed CT-04 prontuário 403: envelope com SEM_PERMISSAO [< 1 ms]
+  Passed UT-06 glicemia de 310 gera alerta GLICEMIA_CRITICA [2 ms]
+  Passed UT-04 sistólica de 185 gera alerta PRESSAO_CRITICA [< 1 ms]
+  Passed Tensiômetro com CNS de outra pessoa é recusado [< 1 ms]
+  Passed CT-03 prontuário 200: listas de histórico e alertas [4 ms]
+  Passed UT-08 duas falhas seguidas e depois um código válido autorizam [5 ms]
+  Passed UT-07 três falhas bloqueiam a próxima tentativa; a 3ª gera TENTATIVA_INDEVIDA [2 ms]
+  Passed UT-09 senha errada lança CredenciaisInvalidasException [75 ms]
+[xUnit.net 00:00:00.21]   Finished:    CartaoSus.Tests
+  Passed UT-10 senha no cadastro é gravada como hash, nunca em texto puro [74 ms]
+
+Test Run Successful.
+Total tests: 23
+     Passed: 23
+ Total time: 0,4463 Seconds

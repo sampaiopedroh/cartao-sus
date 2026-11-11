@@ -1,0 +1,1 @@
+{ "token": "string", "tipo": "string", "expiraEmMinutos": "number", "perfil": "string", "idCidadao": "number|null", "nome": "string" }

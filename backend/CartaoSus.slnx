@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/CartaoSus.Api/CartaoSus.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CartaoSus.Tests/CartaoSus.Tests.csproj" />
+  </Folder>
 </Solution>

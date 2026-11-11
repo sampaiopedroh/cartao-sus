@@ -1,14 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using CartaoSus.Api.Data;
 using CartaoSus.Api.Dtos;
 using CartaoSus.Api.Exceptions;
 using CartaoSus.Api.Models;
 using CartaoSus.Api.Repositories;
 using CartaoSus.Api.Security;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CartaoSus.Api.Services;
@@ -20,7 +18,6 @@ public interface IAuthService
 }
 
 public class AuthService(
-    CartaoSusDbContext db,
     IUsuarioRepository usuarios,
     ICidadaoRepository cidadaos,
     PasswordHasher<Usuario> hasher,
@@ -38,8 +35,8 @@ public class AuthService(
         if (await usuarios.LoginExisteAsync(req.Login) || await cidadaos.CpfOuCnsExisteAsync(cpfHash, req.NumeroCns))
             throw new ConflitoException("Já existe conta com este CPF, CNS ou login.");
 
-        await using var tx = await db.Database.BeginTransactionAsync();
-
+        // Um único SaveChanges: o EF grava Usuario e Cidadao na mesma transação.
+        var segredo = SegurancaUtils.GerarSegredoTotp();
         var usuario = new Usuario
         {
             Login = req.Login,
@@ -48,13 +45,9 @@ public class AuthService(
             CriadoEm = DateTime.UtcNow
         };
         usuario.SenhaHash = hasher.HashPassword(usuario, req.Senha);
-        await usuarios.AdicionarAsync(usuario);
-        await usuarios.SalvarAsync(); // gera ID_USUARIO
-
-        var segredo = SegurancaUtils.GerarSegredoTotp();
         var cidadao = new Cidadao
         {
-            IdUsuario = usuario.IdUsuario,
+            Usuario = usuario,
             CpfHash = cpfHash,
             NumeroCns = req.NumeroCns,
             NomeCompleto = req.NomeCompleto,
@@ -64,7 +57,6 @@ public class AuthService(
         };
         await cidadaos.AdicionarAsync(cidadao);
         await cidadaos.SalvarAsync();
-        await tx.CommitAsync();
 
         return new CadastroResponse(cidadao.IdCidadao, segredo,
             "Conta criada. Guarde o segredo TOTP no app (exibido uma única vez).");
@@ -78,7 +70,7 @@ public class AuthService(
         var resultado = hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, req.Senha);
         if (resultado == PasswordVerificationResult.Failed) throw new CredenciaisInvalidasException();
 
-        var cidadao = await db.Cidadaos.AsNoTracking().FirstOrDefaultAsync(c => c.IdUsuario == usuario.IdUsuario);
+        var cidadao = await cidadaos.PorUsuarioAsync(usuario.IdUsuario);
         var nome = cidadao?.NomeCompleto ?? usuario.Login;
         var minutos = config.GetValue<int>("Jwt:ExpiracaoMinutos", 30);
 

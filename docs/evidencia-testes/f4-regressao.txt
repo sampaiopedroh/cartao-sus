@@ -1,0 +1,167 @@
+# Evidência F4 — regressão após a refatoração do AuthService
+# Data: 2026-11-11 08:55. Banco e API reiniciados antes da execução.
+
+## Bateria F3 (48 casos)
+## E3 — acolhimento NFC + TOTP
+OK  E3 sem X-API-KEY (esperado 401 NAO_AUTORIZADO)
+    esperado=401 obtido=401
+    {"timestamp":"2026-11-11T08:55:23.6319660-03:00","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Chave de dispositivo ausente ou inv\u00E1lida.","campos":{}}
+OK  E3 chave inválida (esperado 401)
+    esperado=401 obtido=401
+    {"timestamp":"2026-11-11T08:55:23.6415730-03:00","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Chave de dispositivo ausente ou inv\u00E1lida.","campos":{}}
+OK  E3 terminal de outra unidade (esperado 403 SEM_PERMISSAO)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:23.6639810-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Terminal n\u00E3o pertence a esta unidade.","campos":{}}
+OK  E3 CNS inexistente (esperado 404)
+    esperado=404 obtido=404
+    {"timestamp":"2026-11-11T08:55:23.6727860-03:00","status":404,"erro":"NAO_ENCONTRADO","mensagem":"CNS n\u00E3o encontrado","campos":{}}
+OK  E3 token com letras (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:23.6773700-03:00","status":400,"erro":"VALIDACAO","mensagem":"tokenRotativo deve ter exatamente 6 d\u00EDgitos","campos":{"tokenRotativo":"tokenRotativo deve ter exatamente 6 d\u00EDgitos"}}
+OK  E3 Maria com TOTP válido (esperado 200 AUTORIZADO)
+    esperado=200 obtido=200
+    {"status":"AUTORIZADO","mensagem":"Identificação e autorização validadas com sucesso.","paciente":{"nomeCompleto":"Maria Souza Lima","cns":"898000000000000","documentosDisponiveis":["RG","CPF","CARTAO_VACINA"],"alertasCriticos":[{"tipo":"ALERGIA","substancia":"Penicilina","severidade":"CRITICO"}],"u
+OK  E3 mesmo código reutilizado (esperado 403 TOKEN_INVALIDO)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:23.7565420-03:00","status":403,"erro":"TOKEN_INVALIDO","mensagem":"Token expirado ou inv\u00E1lido.","campos":{}}
+OK  E3 código errado 2 (esperado 403 TOKEN_INVALIDO)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:23.7678700-03:00","status":403,"erro":"TOKEN_INVALIDO","mensagem":"Token expirado ou inv\u00E1lido.","campos":{}}
+OK  E3 código errado 3 (esperado 403 TOKEN_INVALIDO; gera alerta)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:23.8249590-03:00","status":403,"erro":"TOKEN_INVALIDO","mensagem":"Token expirado ou inv\u00E1lido.","campos":{}}
+OK  E3 após 3 falhas, mesmo com código certo (esperado 403 BLOQUEADO)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:23.9990780-03:00","status":403,"erro":"BLOQUEADO","mensagem":"Acolhimento bloqueado por 10 min ap\u00F3s 3 falhas.","campos":{}}
+
+## E4/E5 — acesso do profissional com consentimento
+OK  E4 profissional sem acolhimento recente (esperado 200: Maria foi autorizada agora)
+    esperado=200 obtido=200
+    {"idCidadao":1,"nomeCompleto":"Maria Souza Lima","cns":"898000000000000","historico":[{"tipo":"CIRURGIA","descricao":"Colecistectomia (vesícula)","severidade":"MODERADO","dataRegistro":"2019-08-15"},{"tipo":"DOENCA_CRONICA","descricao":"Diabetes tipo 2","severidade":"ALTO","dataRegistro":"2021-02-01
+OK  E4 cidadã lê o próprio prontuário (esperado 200)
+    esperado=200 obtido=200
+    {"idCidadao":1,"nomeCompleto":"Maria Souza Lima","cns":"898000000000000","historico":[{"tipo":"CIRURGIA","descricao":"Colecistectomia (vesícula)","severidade":"MODERADO","dataRegistro":"2019-08-15"},{"tipo":"DOENCA_CRONICA","descricao":"Diabetes tipo 2","severidade":"ALTO","dataRegistro":"2021-02-01
+OK  E4 João tenta prontuário da Maria (esperado 403 SEM_PERMISSAO)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.0947970-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Acesso negado aos dados de outro cidad\u00E3o.","campos":{}}
+OK  E4 profissional em cidadão sem consentimento recente (esperado 403)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.0991290-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Acesso restrito: \u00E9 necess\u00E1rio acolhimento autorizado pelo cidad\u00E3o nos \u00FAltimos 10 minutos.","campos":{}}
+OK  E4 sem token (esperado 401)
+    esperado=401 obtido=401
+    {"timestamp":"2026-11-11T08:55:24.1042420-03:00","status":401,"erro":"NAO_AUTORIZADO","mensagem":"Token ausente, inv\u00E1lido ou expirado.","campos":{}}
+OK  E4 id inexistente para o próprio admin (esperado 403)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.1075840-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Perfil sem permiss\u00E3o para este recurso.","campos":{}}
+OK  E5 sinais de glicemia da Maria (esperado 200 com resumo)
+    esperado=200 obtido=200
+    {"tipo":"GLICEMIA","medicoes":[{"valor":138.00,"origem":"APP","dataHora":"2026-11-08T19:40:00"},{"valor":112.00,"origem":"APP","dataHora":"2026-11-09T07:15:00"}],"resumo":{"media":125.00,"minima":112.00,"maxima":138.00,"total":2}}
+OK  E5 sinais com data (esperado 200)
+    esperado=200 obtido=200
+    {"tipo":null,"medicoes":[{"valor":138.00,"origem":"APP","dataHora":"2026-11-08T19:40:00"},{"valor":112.00,"origem":"APP","dataHora":"2026-11-09T07:15:00"},{"valor":124.00,"origem":"APP","dataHora":"2026-11-09T07:15:00"},{"valor":80.00,"origem":"APP","dataHora":"2026-11-09T07:15:00"}],"resumo":{"medi
+
+## E6 — telemetria (tensiômetro, cidadão e terminal)
+OK  E6 tensiômetro pressão crítica 185 (esperado 201 alertaDisparado=true)
+    esperado=201 obtido=201
+    {"idSinal":10,"alertaDisparado":true,"alerta":{"tipo":"PRESSAO_CRITICA","mensagem":"Alerta de Pressão Crítica: Procure a UPA mais próxima"}}
+OK  E6 tensiômetro pressão normal 120 (esperado 201 sem alerta)
+    esperado=201 obtido=201
+    {"idSinal":11,"alertaDisparado":false,"alerta":null}
+OK  E6 tensiômetro com CNS de outra pessoa (esperado 403)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.1570760-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"CNS n\u00E3o corresponde ao cidad\u00E3o vinculado ao dispositivo.","campos":{}}
+OK  E6 glicemia crítica 310 pelo app (esperado 201 GLICEMIA_CRITICA)
+    esperado=201 obtido=201
+    {"idSinal":12,"alertaDisparado":true,"alerta":{"tipo":"GLICEMIA_CRITICA","mensagem":"Glicemia crítica: procure atendimento de saúde"}}
+OK  E6 valor zero (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.1626710-03:00","status":400,"erro":"VALIDACAO","mensagem":"Dados inv\u00E1lidos.","campos":{"valor":"deve ser maior que zero"}}
+OK  E6 tipo inválido (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.1634200-03:00","status":400,"erro":"VALIDACAO","mensagem":"Dados inv\u00E1lidos.","campos":{"tipoMedicao":"tipo de medi\u00E7\u00E3o inv\u00E1lido"}}
+OK  E6 terminal NFC não envia telemetria (esperado 403)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.1662360-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Este perfil n\u00E3o pode enviar telemetria.","campos":{}}
+
+## E10 — alertas e E7 — histórico
+OK  E10 alertas do João (esperado 200 paginado)
+    esperado=200 obtido=200
+    {"content":[{"idAlerta":1,"tipo":"PRESSAO_CRITICA","severidade":"CRITICA","mensagem":"Alerta de Pressão Crítica: Procure a UPA mais próxima","statusEnvio":"PENDENTE","criadoEm":"2026-11-11T11:55:20"},{"idAlerta":2,"tipo":"TENTATIVA_INDEVIDA","severidade":"ALTA","mensagem":"3 tentativas inválidas de 
+OK  E10 marcar alerta como ENTREGUE (esperado 204)
+    esperado=204 obtido=204
+    
+OK  E7 Maria atualiza o próprio histórico (esperado 200)
+    esperado=200 obtido=200
+    {"idHistorico":1,"tipo":"ALERGIA","descricao":"Penicilina (confirmado 2026)","grauSeveridade":"CRITICO","dataRegistro":"2024-05-10"}
+OK  E7 grau inválido (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.2028230-03:00","status":400,"erro":"VALIDACAO","mensagem":"Dados inv\u00E1lidos.","campos":{"grauSeveridade":"deve ser LEVE, MODERADO, ALTO ou CRITICO"}}
+OK  E7 histórico de outro cidadão (esperado 404)
+    esperado=404 obtido=404
+    {"timestamp":"2026-11-11T08:55:24.2045210-03:00","status":404,"erro":"NAO_ENCONTRADO","mensagem":"Registro cl\u00EDnico n\u00E3o encontrado.","campos":{}}
+OK  Extra acessos da Maria (esperado 200)
+    esperado=200 obtido=200
+    [{"idSessao":6,"statusAutenticacao":"AUTORIZADO","motivo":null,"dataHoraAcesso":"2026-11-11T08:55:24","idUnidade":1},{"idSessao":7,"statusAutenticacao":"REJEITADO","motivo":"Token já utilizado","dataHoraAcesso":"2026-11-11T08:55:24","idUnidade":1},{"idSessao":8,"statusAutenticacao":"REJEITADO","moti
+
+## E8 e E9 — carteira de documentos
+OK  E8 receita sem validade (esperado 400 campos.dataValidade)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.2189970-03:00","status":400,"erro":"VALIDACAO","mensagem":"Dados inv\u00E1lidos.","campos":{"dataValidade":"obrigat\u00F3ria para RECEITA_MEDICA"}}
+OK  E8 hash inválido (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.2202870-03:00","status":400,"erro":"VALIDACAO","mensagem":"hashIntegridade deve ter 64 caracteres hexadecimais","campos":{"hashIntegridade":"hashIntegridade deve ter 64 caracteres hexadecimais"}}
+OK  E8 RG válido (esperado 201)
+    esperado=201 obtido=201
+    {"idDocumento":6,"mensagem":"Documento registrado na carteira."}
+OK  E9 excluir o próprio documento (esperado 204)
+    esperado=204 obtido=204
+    
+OK  E9 excluir documento da Maria (esperado 403)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.2401280-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Documento pertence a outro cidad\u00E3o.","campos":{}}
+OK  E9 documento inexistente (esperado 404)
+    esperado=404 obtido=404
+    {"timestamp":"2026-11-11T08:55:24.2419880-03:00","status":404,"erro":"NAO_ENCONTRADO","mensagem":"Documento n\u00E3o encontrado.","campos":{}}
+
+## E11, E12 e catálogo — APIs do SUS
+OK  E11 equipamentos de um CNES (esperado 200)
+    esperado=200 obtido=200
+    {"coCnes":"2078015","estabelecimento":"HC DA FMUSP HOSPITAL DAS CLINICAS","equipamentos":[{"tipo":"1  - DIAGNOSTICO POR IMAGEM","descricao":"04 - Raio X ate 100 mA","quantidadeExistente":9,"quantidadeEmUso":6},{"tipo":"3  - Equipamentos por Metodos Opticos","descricao":"32 - Endoscopio das Vias Urin
+OK  E11 CNES com formato errado (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.6255520-03:00","status":400,"erro":"VALIDACAO","mensagem":"Par\u00E2metros inv\u00E1lidos.","campos":{"cnes":"deve ter 7 d\u00EDgitos"}}
+OK  E12 insulina asparte em SP (esperado 200)
+    esperado=200 obtido=200
+    {"content":[{"nome":"Insulina asparte","catmat":"BR0276234-2","municipio":"SAO PAULO","estabelecimento":"SMS SP GABINETE","quantidade":186.0,"dataPosicao":"2026-11-08","latitude":-23.5635809,"longitude":-46.6372444},{"nome":"Insulina asparte","catmat":"BR0276234-2","municipio":"SAO PAULO","estabelec
+OK  E12 sem município (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.7837960-03:00","status":400,"erro":"VALIDACAO","mensagem":"The municipio field is required.","campos":{"municipio":"The municipio field is required."}}
+OK  E12 paginação inválida (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.7850380-03:00","status":400,"erro":"VALIDACAO","mensagem":"Par\u00E2metros inv\u00E1lidos.","campos":{"size":"deve estar entre 1 e 100"}}
+OK  Catálogo busca 'insulina' sem acento (esperado 200)
+    esperado=200 obtido=200
+    [{"nome":"Insulina asparte","apresentacao":"100 UI/mL, solução injetável, 3 mL","catmat":"BR0276234-2"}]
+
+## E13 e E14 — unidades e auditoria
+OK  E13 unidades paginadas (esperado 200)
+    esperado=200 obtido=200
+    {"content":[{"id":1,"codigoCnes":"9186492","nome":"UBS JARDIM COLOMBO","tipo":"UBS","bairro":"JARDIM COLOMBO","latitude":-23.6010000,"longitude":-46.7270000},{"id":2,"codigoCnes":"8530378","nome":"UPA VILA PRUDENTE","tipo":"UPA","bairro":"JARDIM INDEPENDENCIA","latitude":-23.5831231,"longitude":-46.
+OK  E14 auditoria como ADMIN (esperado 200)
+    esperado=200 obtido=200
+    {"content":[{"idSessao":10,"cidadao":"Maria Souza Lima","login":"maria.souza@cartaosus.demo","unidade":"UBS JARDIM COLOMBO","tokenUtilizado":"898344","statusAutenticacao":"REJEITADO","motivo":"Bloqueado","dataHoraAcesso":"2026-11-11T08:55:24"},{"idSessao":9,"cidadao":"Maria Souza Lima","login":"mari
+OK  E14 auditoria como cidadão (esperado 403)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.8445200-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Perfil sem permiss\u00E3o para este recurso.","campos":{}}
+OK  E14 status inválido (esperado 400)
+    esperado=400 obtido=400
+    {"timestamp":"2026-11-11T08:55:24.8457350-03:00","status":400,"erro":"VALIDACAO","mensagem":"Par\u00E2metros inv\u00E1lidos.","campos":{"status":"deve ser AUTORIZADO, EXPIRADO ou REJEITADO"}}
+
+## E3 — unidade que não é a do terminal, para registro
+OK  E3 João com terminal da UPA (esperado 403: unidade não é a do terminal)
+    esperado=403 obtido=403
+    {"timestamp":"2026-11-11T08:55:24.8512020-03:00","status":403,"erro":"SEM_PERMISSAO","mensagem":"Terminal n\u00E3o pertence a esta unidade.","campos":{}}
+
+## E1 cadastro novo (esperado 201) e duplicado (esperado 409)
+E1 novo: 201 com segredoTotp (omitido)
+E1 duplicado: 409

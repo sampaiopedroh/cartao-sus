@@ -1,0 +1,11 @@
+{
+  "status": "string",
+  "mensagem": "string",
+  "paciente": {
+    "nomeCompleto": "string",
+    "cns": "string",
+    "documentosDisponiveis": [ "string" ],
+    "alertasCriticos": [ { "tipo": "string", "substancia": "string", "severidade": "string" } ],
+    "ultimasMedicoes": { "glicemia": "number|null", "pressaoArterial": "string|null", "dataRegistro": "string|null" }
+  }
+}

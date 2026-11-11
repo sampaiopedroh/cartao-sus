@@ -104,7 +104,19 @@ Erros seguem o envelope do SDD 5.1: `timestamp`, `status`, `erro`, `mensagem`, `
 
 ## Testes
 
-Os testes automatizados (xUnit) entram na F4. Nesta fase, a evidência é o `curl` documentado em `docs/evidencia-testes/f2-curl.txt`.
+Dois conjuntos de testes automatizados, sem banco de dados:
+
+```bash
+cd backend
+dotnet test CartaoSus.slnx
+```
+
+- **Unitários** (`tests/CartaoSus.Tests/Unitarios/`): regras de negócio com repositórios simulados (Moq). Cobrem TOTP, bloqueio e alertas, telemetria, cadastro e login, documentos e a falha do SUS.
+- **Contrato** (`tests/CartaoSus.Tests/Contrato/`): o formato das respostas é comparado com os snapshots em `Contrato/Snapshots/`. Quebrar um campo faz o teste falhar.
+
+Resultado atual: 23 de 23. Evidência em `docs/evidencia-testes/f4-resumo.md`.
+
+Os testes de integração contra o MySQL ficam para a F5. A evidência da F2 e da F3 está em `docs/evidencia-testes/` (`f2-curl.txt`, `f3-testes.txt`).
 
 ## Observação sobre dependências
 

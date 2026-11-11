@@ -1,0 +1,7 @@
+{
+  "idCidadao": "number",
+  "nomeCompleto": "string",
+  "cns": "string",
+  "historico": [ { "tipo": "string", "descricao": "string", "severidade": "string", "dataRegistro": "string" } ],
+  "alertasPendentes": [ { "idAlerta": "number", "tipo": "string", "severidade": "string", "mensagem": "string", "statusEnvio": "string", "criadoEm": "string" } ]
+}
