@@ -2,6 +2,7 @@ package br.edu.cartaosus.navegacao
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -38,6 +39,8 @@ import br.edu.cartaosus.ui.consulta.ConsultaScreen
 import br.edu.cartaosus.ui.consulta.ConsultaViewModel
 import br.edu.cartaosus.ui.dashboard.DashboardScreen
 import br.edu.cartaosus.ui.dashboard.DashboardViewModel
+import br.edu.cartaosus.ui.documentos.DocumentosScreen
+import br.edu.cartaosus.ui.documentos.DocumentosViewModel
 import br.edu.cartaosus.ui.sinais.SinaisScreen
 import br.edu.cartaosus.ui.sinais.SinaisViewModel
 import br.edu.cartaosus.ui.token.TokenScreen
@@ -68,12 +71,21 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
     val entrada by navegador.currentBackStackEntryAsState()
     val rotaAtual = entrada?.destination?.route ?: Rotas.INICIO
     val abaAtual = ABAS.firstOrNull { it.rota == rotaAtual } ?: ABAS.first()
+    val emDocumentos = rotaAtual == Rotas.DOCUMENTOS
+    val titulo = if (emDocumentos) "Meus documentos" else abaAtual.titulo
     var confirmandoSaida by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(abaAtual.titulo, style = MaterialTheme.typography.titleLarge) },
+                title = { Text(titulo, style = MaterialTheme.typography.titleLarge) },
+                navigationIcon = {
+                    if (emDocumentos) {
+                        IconButton(onClick = { navegador.popBackStack() }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar ao início")
+                        }
+                    }
+                },
                 actions = {
                     IconButton(onClick = { confirmandoSaida = true }) {
                         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair da conta")
@@ -89,7 +101,7 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
             NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                 ABAS.forEach { aba ->
                     NavigationBarItem(
-                        selected = rotaAtual == aba.rota,
+                        selected = rotaAtual == aba.rota || (emDocumentos && aba.rota == Rotas.INICIO),
                         onClick = { navegador.irParaAba(aba.rota) },
                         icon = { Icon(aba.icone, contentDescription = null) },
                         label = { Text(aba.rotulo, style = MaterialTheme.typography.labelMedium) },
@@ -110,8 +122,15 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
                 DashboardScreen(
                     viewModel = viewModel,
                     nome = nome,
-                    onAbrir = { navegador.irParaAba(it) },
+                    onAbrir = { if (it == Rotas.DOCUMENTOS) navegador.navigate(it) { launchSingleTop = true } else navegador.irParaAba(it) },
                 )
+            }
+            composable(Rotas.DOCUMENTOS) {
+                val contexto = androidx.compose.ui.platform.LocalContext.current
+                val viewModel: DocumentosViewModel = viewModel(initializer = {
+                    DocumentosViewModel(app.banco.documentos(), { app.sessao.idCidadao }, contexto.applicationContext.contentResolver)
+                })
+                DocumentosScreen(viewModel = viewModel)
             }
             composable(Rotas.TOKEN) {
                 val viewModel: TokenViewModel = viewModel(initializer = { TokenViewModel(app.sessao, app.cidadao) })

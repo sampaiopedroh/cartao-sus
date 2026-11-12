@@ -7,6 +7,9 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Update
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import android.content.Context
@@ -36,12 +39,52 @@ interface MedicaoDao {
     suspend fun remover(medicao: MedicaoPendente)
 }
 
-@Database(entities = [MedicaoPendente::class], version = 1, exportSchema = false)
+// Documentos anexados: só o caminho (URI) fica no aparelho; nada disso vai para a API.
+@Entity(tableName = "documento_local")
+data class DocumentoLocal(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val idCidadao: Long,
+    val tipo: String,
+    val titulo: String,
+    val uri: String,
+    val adicionadoEm: Long,
+)
+
+@Dao
+interface DocumentoDao {
+    @Insert
+    suspend fun inserir(documento: DocumentoLocal)
+
+    @Update
+    suspend fun atualizar(documento: DocumentoLocal)
+
+    @Query("SELECT * FROM documento_local WHERE idCidadao = :idCidadao ORDER BY adicionadoEm DESC")
+    fun observar(idCidadao: Long): Flow<List<DocumentoLocal>>
+
+    @Delete
+    suspend fun remover(documento: DocumentoLocal)
+}
+
+@Database(entities = [MedicaoPendente::class, DocumentoLocal::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun medicoes(): MedicaoDao
+    abstract fun documentos(): DocumentoDao
 
     companion object {
         fun criar(context: Context): AppDatabase =
-            Room.databaseBuilder(context, AppDatabase::class.java, "cartao_sus.db").build()
+            Room.databaseBuilder(context, AppDatabase::class.java, "cartao_sus.db")
+                .addMigrations(MIGRACAO_1_2)
+                .build()
+
+        // Mantém a fila de medições pendentes e só acrescenta a tabela de documentos.
+        val MIGRACAO_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `documento_local` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`idCidadao` INTEGER NOT NULL, `tipo` TEXT NOT NULL, `titulo` TEXT NOT NULL, " +
+                        "`uri` TEXT NOT NULL, `adicionadoEm` INTEGER NOT NULL)",
+                )
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
@@ -50,6 +51,7 @@ import br.edu.cartaosus.data.Erros
 import br.edu.cartaosus.navegacao.Rotas
 import br.edu.cartaosus.ui.Estado
 import br.edu.cartaosus.ui.comum.Aviso
+import br.edu.cartaosus.ui.comum.BotaoTexto
 import br.edu.cartaosus.ui.comum.BotaoPrincipal
 import br.edu.cartaosus.ui.comum.BotaoSecundario
 import br.edu.cartaosus.ui.comum.EstadoCarregando
@@ -121,8 +123,9 @@ fun DashboardScreen(viewModel: DashboardViewModel, nome: String, onAbrir: (Strin
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                 Atalho("Meus sinais de saúde", "Pressão, glicemia, peso", Icons.Filled.Favorite, Modifier.weight(1f)) { onAbrir(Rotas.SINAIS) }
-                Atalho("Como funciona", "Ajuda rápida", Icons.Filled.Info, Modifier.weight(1f)) { ajuda = true }
+                Atalho("Meus documentos", "RG, laudos, receitas", Icons.AutoMirrored.Filled.List, Modifier.weight(1f)) { onAbrir(Rotas.DOCUMENTOS) }
             }
+            BotaoTexto("Como funciona o Cartão SUS?", onClick = { ajuda = true })
 
             Text("Avisos", style = MaterialTheme.typography.titleMedium)
             if (dados.alertas.isEmpty()) {

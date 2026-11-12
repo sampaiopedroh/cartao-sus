@@ -34,6 +34,7 @@ object Rotas {
     const val TOKEN = "token"
     const val CONSULTA = "consulta"
     const val SINAIS = "sinais"
+    const val DOCUMENTOS = "documentos"
 }
 
 // Fluxo externo: verificar sessão, login, cadastro e a área logada. As abas ficam

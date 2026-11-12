@@ -8,3 +8,6 @@
 - 46 testes unitários Android passando.
 
 Capturas: ux-login.png, ux-inicio.png, ux-atendimento.png, ux-consultar.png, ux-saude.png.
+
+## Meus documentos
+Atalho "Meus documentos" na tela inicial. O seletor do Android (sem permissão ampla de armazenamento) devolve o arquivo; o app guarda a permissão de leitura persistente e salva só o caminho, tipo e título no celular. Verificado no emulador: anexar, sobreviver ao reinício do app, abrir no visualizador e aviso quando o arquivo é apagado (ux-documentos*.png).
