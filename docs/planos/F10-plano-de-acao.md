@@ -1,99 +1,126 @@
-# Plano de ação — Fase F10 (Entrega final)
+# Plano de ação — Fase F10 (Entrega final), versão de 11/11/2026
 
 ## Context
 
-As fases F0 a F9 entregaram o MVP, com código, testes e evidências. Falta montar o pacote que o professor recebe na plataforma, até 19/11/2026 às 23h55, e que o edital descreve (slide 14): um `.zip` do projeto com README de execução, um PDF com os entregáveis de cada parte, e um `.txt` com nome do grupo, RM de cada integrante e o link do vídeo pitch.
+As fases F0 a F9 estão prontas e no GitHub (`sampaiopedroh/cartao-sus`, branch `main`): banco, API, testes, app Android, sensores, evidências e relatório. Depois da F9 entraram duas melhorias no app, que mudam o que vai no PDF e no vídeo:
 
-Além disso, o vídeo pitch (5 pontos) precisa ser gravado, enviado a um link público e testado em aba anônima. Hoje são 11/11, então há oito dias.
+- **Redesenho de UX** (letras maiores, abas Início, Atendimento, Consultar e Saúde, botão Início que volta à tela inicial).
+- **Meus documentos** e **compartilhamento depois da validação do código**, com a decisão registrada em `docs/adr/ADR-nfc-compartilhamento.md` (a ideia é NFC; por limitação da simulação, usamos o seletor do Android).
 
-Estimativa do SDD: 4 horas de trabalho meu, mais a gravação do vídeo pelo grupo.
+Falta montar o pacote que o professor recebe na plataforma, até **19/11/2026 às 23h55**: um `.zip` do projeto com README de execução, um PDF com os entregáveis das seis partes e um `.txt` com nome do grupo, RM de cada integrante e o link do vídeo pitch. Hoje é 11/11, então há oito dias. Meta interna: tudo pronto até **17/11**, com a margem de dois dias para imprevistos.
+
+## O que já está pronto
+
+| Item | Estado |
+|---|---|
+| Nome do grupo e integrantes com RM | Preenchidos em `ENTREGA-TXT.txt` |
+| Código, testes e evidências (UT, CT, IT, MT) | Prontos, em `docs/evidencia-testes/` |
+| Capturas do app novo | `ux-*.png` e `ux-resumo.md` |
+| Decisões e limitações | `docs/adr/`, `docs/PENDENCIAS.md`, seção de limitações do `RELATORIO.md` |
+| Link do vídeo, declaração de IA, PDF, `.zip` | **Faltam** |
 
 ## Decisões e informações que preciso de você
 
-1. **Nomes, RMs e e-mails de cada integrante do grupo.** São obrigatórios no `.txt` e não consigo obtê-los sozinho.
-2. **Declaração de uso de IA (recomendado: texto baseado no que realmente foi usado).** A regra da disciplina ainda aparece como exemplo no slide 15. Proponho escrever a declaração com as ferramentas efetivamente usadas (Claude para o código e a documentação, Gemini para revisão do SDD) e o que cada uma fez, mais a revisão humana. Você confirma se o grupo concorda com esse texto.
-3. **Vídeo pitch: quem grava e onde publica (recomendado: o grupo grava com o protótipo rodando; publicação no YouTube como não listado, ou Google Drive com acesso por link).** Eu preparo o roteiro final de 3 minutos com os tempos do SDD (seção 12) e a lista de cenas a gravar com o próprio app e a API.
+1. **Declaração de uso de IA (recomendado: texto baseado no uso real).** Escrevo com as ferramentas efetivamente usadas (Claude para código, testes e documentação; Gemini para revisão do SDD) e com a revisão humana do grupo. Você confirma se o grupo concorda com o texto. Se a disciplina tiver regra própria, confirmo com o professor antes de enviar.
+2. **Vídeo pitch: quem grava e onde publica (recomendado: o grupo grava com o protótipo rodando; YouTube como "não listado", ou Google Drive com acesso por link).** Eu preparo o roteiro e a lista de cenas; a gravação e o link são do grupo.
+3. **Formato do PDF (recomendado: um único PDF).** Gerado a partir de um Markdown consolidado, com as capturas.
+4. **Commits dos outros integrantes.** O histórico tem um único autor (22 commits). O edital valoriza commits de todos. Cada integrante pode fazer um commit pequeno e real (por exemplo, conferir o README no próprio computador e corrigir um detalhe). Se não for possível, registro no relatório.
 
 ## Escopo (passo a passo)
 
-### Passo 1 — README raiz final
-- Revisar o `cartao-sus/README.md` com o que o avaliador precisa: visão geral, arquitetura, estrutura, pré-requisitos, como executar (banco, API, app, sensores), como testar, declaração de IA e link do vídeo.
-- Substituir os TODOs restantes (declaração de IA e link do pitch).
-- Links relativos para as pastas de cada parte.
+### Passo 1 — Atualizar documentação com o que mudou desde a F9
+- `README.md` da raiz: status das fases (F8 com UX, documentos e compartilhamento), contagem de testes e telas do app.
+- `RELATORIO.md`: recontar os testes (o Android agora tem 50 testes unitários) e incluir os casos de UX: voltar ao Início, documentos, compartilhamento e arquivo ausente.
+- Plano de cada fase copiado para `docs/planos/` (inclui este plano atualizado).
 
-### Passo 2 — Teste de clone limpo do zero
-- Clonar o repositório em uma pasta nova, sem `.env`, sem `bin/`, sem `build/` e sem `seed_dispositivos.sql`.
-- Seguir só o README, na ordem: banco, schema, seed, chaves, API, `dotnet test`, sensores e aplicativo.
-- Qualquer passo que falhar é corrigido no README antes de fechar a fase. Este é o teste que o avaliador vai fazer.
+### Passo 2 — README raiz final
+- Visão geral, arquitetura, estrutura, pré-requisitos, como executar (banco, API, app, sensores), como testar.
+- Substituir os dois itens pendentes: declaração de IA e link do pitch.
+- Links relativos para cada parte.
 
-### Passo 3 — PDF com os entregáveis das seis partes
-- Um documento único, gerado a partir de um Markdown consolidado (`ENTREGA-PDF.md`), com:
-  - Capa com nome do grupo, integrantes e disciplina.
-  - Parte 1 (banco): DER (`database/DER.md`), explicação da modelagem e as 7 consultas com resultado.
-  - Parte 2 (API): lista dos endpoints, status HTTP, camadas e exemplos de curl.
-  - Parte 3 (testes): plano de casos e resultado consolidado (`RELATORIO.md`).
-  - Parte 4 (frontend mobile): telas com capturas (F7 e F8).
-  - Parte 5 (segurança): modelo de ameaças, autenticação, RBAC, boas práticas e LGPD (SDD seção 8).
-  - Parte 6 (IoT): explicação de sensor, medição e influência (`iot/README.md`).
-  - Anexo: link do repositório, link do vídeo, declaração de IA e limitações.
-- Ferramenta de geração: escolho na execução a melhor disponível (pandoc, se instalado, ou impressão a partir de HTML pelo navegador). Confirmo com você se o formato é PDF mesmo.
+### Passo 3 — Teste de clone limpo, do zero
+- Clonar o repositório do GitHub em uma pasta nova, sem `.env`, `bin/`, `build/` nem `seed_dispositivos.sql`.
+- Seguir só o README, na ordem: banco, schema, seed, chaves, API, `dotnet test`, sensores e app.
+- Qualquer passo que falhar vira correção do README antes de fechar a fase. É o teste que o avaliador vai fazer.
+- Incluir o teste do app: `./gradlew assembleDebug testDebugUnitTest` e o fluxo de código mais compartilhamento descrito em `iot/README.md`.
 
-### Passo 4 — Arquivo `.txt` de entrega
-- Nome do grupo, RM e nome completo de cada integrante, e-mail (opcional), e o link público do vídeo pitch.
-- Conteúdo mínimo e formato simples, sem caracteres especiais.
+### Passo 4 — PDF com as seis partes
+Um Markdown consolidado (`ENTREGA-PDF.md`) gerando um único PDF, com:
+- Capa: grupo GateMinds, integrantes, disciplina.
+- **Parte 1 (banco):** DER, explicação da modelagem e as 7 consultas com resultado.
+- **Parte 2 (API):** endpoints, status HTTP, camadas e exemplos de curl.
+- **Parte 3 (testes):** plano de casos e `RELATORIO.md` (contagens atualizadas).
+- **Parte 4 (frontend mobile):** telas com as capturas novas (login, início, atendimento, consultar, saúde, documentos e compartilhamento).
+- **Parte 5 (segurança):** modelo de ameaças, autenticação, RBAC, boas práticas e LGPD (SDD seção 8).
+- **Parte 6 (IoT):** sensor, medição e influência (`iot/README.md`).
+- **Anexo:** link do repositório, link do vídeo, declaração de IA, limitações e o ADR do NFC.
+- Ferramenta: não há pandoc nem wkhtmltopdf instalados. Uso HTML gerado do Markdown e impresso em PDF pelo Chrome sem interface (ou pelo navegador do app). Instalo uma dependência só se for necessário e peço antes.
 
-### Passo 5 — Vídeo pitch (5 pontos)
-- Roteiro final de 3 minutos, com os tempos do SDD seção 12 e as cenas que o grupo precisa gravar:
-  1. Problema (0:00 a 0:30): cena da busca de remédio vazia ou do cidadão na fila.
-  2. Solução (0:30 a 1:00): as três frentes do cartão.
-  3. Demonstração (1:00 a 2:00): login, código TOTP no app, handshake no terminal, tensiômetro com banner de alerta.
-  4. Segurança (2:00 a 2:30): documento no aparelho e cartão que não abre nada sem o código.
-  5. Impacto (2:30 a 3:00): métricas (76 casos), ODS 3, 10 e 11, e próximos passos.
-- Regras do edital: até 3 minutos, mostrar o protótipo (não slides), link público testado em aba anônima.
-- Checklist de gravação com o ambiente pronto (API, banco e aplicativo no ar antes de gravar).
+### Passo 5 — Roteiro e checklist do vídeo pitch (`docs/roteiro-pitch.md`)
+Até 3 minutos, mostrando o protótipo (não slides), com os tempos do SDD seção 12:
+1. **Problema (0:00 a 0:30):** busca de remédio vazia, ou cidadão na fila.
+2. **Solução (0:30 a 1:00):** as frentes do cartão (cartão digital, código de atendimento, documentos e sinais vitais).
+3. **Demonstração (1:00 a 2:00):** login, código no app, terminal validando, botão de compartilhar documentos, e tensiômetro gerando alerta crítico.
+4. **Segurança (2:00 a 2:30):** documentos só no aparelho, sem código nada é liberado, bloqueio após três falhas. Uma frase honesta: o toque por NFC é simulado.
+5. **Impacto (2:30 a 3:00):** número de testes, ODS 3, 10 e 11, e próximos passos (NFC real com HCE).
+- Checklist de gravação: banco, API, emulador e terminal no ar antes de gravar; arquivos de exemplo no celular; segredo da Maria salvo no app.
+- Link testado em **aba anônima** antes de ir para o `.txt`.
 
-### Passo 6 — Montagem do `.zip`
-- Incluir: `cartao-sus/` completo sem arquivos ignorados (`.env`, `bin/`, `obj/`, `build/`, `.gradle/`, `local.properties`, `seed_dispositivos.sql`, logs).
-- Verificar com `git archive` ou com uma lista explícita de arquivos, e conferir se nenhum segredo está dentro (`git grep` e busca por padrões de chave).
-- Incluir na raiz do `.zip`: README, PDF, `.txt` do grupo e pasta do projeto.
+### Passo 6 — Arquivo `.txt` de entrega
+- Já tem nome do grupo e RMs. Falta só o link do vídeo.
+- Texto simples, sem caracteres especiais, como está.
 
-### Passo 7 — Checklist final do edital (SDD seção 14)
-- Conferir item a item: `.zip`, README, PDF com as 6 partes, `.txt` com integrantes e link, `dotnet test` verde, app compilando, scripts IoT funcionando, nenhum segredo versionado e repositório com commits de todos.
-- Os commits de todos os integrantes são um diferencial do edital; isso depende de cada um do grupo fazer commits com o próprio nome. Vou registrar no relatório que o histórico atual é de um único autor.
+### Passo 7 — Montagem do `.zip`
+- Gerado a partir do **git** (`git archive`), para não levar arquivos ignorados: `.env`, `bin/`, `obj/`, `build/`, `.gradle/`, `local.properties`, `seed_dispositivos.sql`, logs.
+- Raiz do `.zip`: pasta do projeto, `ENTREGA-PDF` (PDF), `ENTREGA-TXT.txt`.
+- Verificação: listar o conteúdo, procurar padrões de segredo (`git grep` e busca por chaves e senhas), conferir tamanho e abrir o `.zip` em pasta vazia.
+
+### Passo 8 — Checklist final do edital (SDD seção 14)
+Conferir item a item: `.zip`, README, PDF com as 6 partes, `.txt` com integrantes e link, `dotnet test` verde, app compilando e testes do Android, scripts IoT funcionando, nenhum segredo versionado, e histórico de commits.
 
 ## Verificação
 
-1. Clone limpo segue o README do zero e chega ao estado "API no ar, testes verdes e app compilando".
-2. O `.zip` abre, e a lista de arquivos não contém nenhum item ignorado nem segredo.
-3. O PDF abre, tem as seis partes, e os números batem com `RELATORIO.md`.
-4. O `.txt` tem os nomes e RMs de todos os integrantes e um link que abre em aba anônima.
-5. O vídeo tem até 3 minutos, mostra o protótipo funcionando e está publicado com acesso por link.
-6. Checklist do edital completo, com cada item marcado.
+1. Clone limpo segue o README do zero e chega a "API no ar, testes verdes e app compilando".
+2. O `.zip` abre, e a lista não contém nenhum arquivo ignorado nem segredo.
+3. O PDF abre, tem as seis partes, e os números batem com o `RELATORIO.md`.
+4. O `.txt` tem os nomes e RMs de todos e um link que abre em aba anônima.
+5. O vídeo tem até 3 minutos, mostra o protótipo e está público.
+6. Checklist do edital completo, item por item.
 
 **Critério de pronto da F10:** itens de 1 a 6 passam e o `.zip` está pronto para envio na plataforma antes de 19/11/2026 às 23h55.
+
+## Cronograma sugerido
+
+| Data | O que |
+|---|---|
+| 11/11 a 12/11 | Passos 1 e 2 (documentação e README), declaração de IA aprovada |
+| 13/11 | Passo 3 (clone limpo) e correções |
+| 14/11 | Passo 4 (PDF) e Passo 5 (roteiro) |
+| 15/11 a 16/11 | Grupo grava o vídeo e envia o link; commits dos integrantes |
+| 17/11 | Passos 6 a 8 (`.txt`, `.zip`, checklist). Meta de entrega |
+| 18/11 e 19/11 | Margem e envio na plataforma |
 
 ## Riscos
 
 | Risco | Mitigação |
 |---|---|
-| Prazo do vídeo apertado | Gravar até 16/11, deixando margem para regravar |
 | Vídeo com link privado ou quebrado | Testar em aba anônima antes de enviar |
-| Pacote com segredo ou arquivo grande demais | Lista explícita de arquivos e verificação com `git grep` |
+| Gravar tarde demais | Gravar até 16/11, deixando espaço para regravar |
+| Pacote com segredo ou grande demais | `git archive` e varredura de padrões de segredo |
+| README falha no clone limpo | Passo 3 corrige antes do PDF e do `.zip` |
 | Declaração de IA fora da regra da disciplina | Confirmar a regra com o professor antes de enviar |
-| Histórico do git com um único autor | Cada integrante faz commits com o próprio nome; registrar no relatório caso não seja possível |
+| Histórico com um único autor | Commits dos demais integrantes; se não der, registrar no relatório |
+| Demo ao vivo falhar na gravação | Checklist de ambiente e arquivos de exemplo prontos; gravar em partes |
 
-## Arquivos a criar
+## Arquivos a criar ou mudar
 
-- `cartao-sus/README.md` (revisão final)
-- `ENTREGA-PDF.md` e o PDF gerado a partir dele
-- `ENTREGA-TXT.txt` com integrantes e link do vídeo
-- `docs/roteiro-pitch.md` (roteiro e checklist de gravação)
-- O `.zip` final na pasta `gs-2026/`
+- Criar: `ENTREGA-PDF.md` e o PDF, `docs/roteiro-pitch.md`, o `.zip` final em `gs-2026/`.
+- Mudar: `README.md` (status, IA, link), `RELATORIO.md` (contagens e casos de UX), `ENTREGA-TXT.txt` (link do vídeo).
 
-Nenhuma mudança na API, no app ou nos testes é prevista.
+Nenhuma mudança na API nem no app é prevista; se o clone limpo achar defeito, a correção entra como commit próprio.
 
 ## Perguntas em aberto
 
-1. **Nome, RM e e-mail de cada integrante do grupo?**
-2. **Aprova o texto de declaração de IA baseado no uso real (recomendado)?**
-3. **Quem grava o vídeo e onde ele será publicado (YouTube não listado ou Google Drive com link)?**
+1. **Aprova o texto de declaração de IA baseado no uso real?** (recomendado)
+2. **Quem grava o vídeo e onde ele será publicado?** (YouTube não listado ou Google Drive com link)
+3. **Aprova o PDF único gerado de HTML pelo Chrome?** (recomendado)
