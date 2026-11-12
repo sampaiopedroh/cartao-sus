@@ -1,5 +1,6 @@
 package br.edu.cartaosus.ui.dashboard
 
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,13 @@ import br.edu.cartaosus.data.Erros
 import br.edu.cartaosus.navegacao.Rotas
 import br.edu.cartaosus.ui.Estado
 import br.edu.cartaosus.ui.comum.Aviso
+import br.edu.cartaosus.ui.comum.TituloSecao
+import br.edu.cartaosus.ui.comum.titulo
+import br.edu.cartaosus.domain.Fala
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.foundation.layout.heightIn
 import br.edu.cartaosus.ui.comum.BotaoTexto
 import br.edu.cartaosus.ui.comum.BotaoPrincipal
 import br.edu.cartaosus.ui.comum.BotaoSecundario
@@ -112,22 +120,28 @@ fun DashboardScreen(viewModel: DashboardViewModel, nome: String, onAbrir: (Strin
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             val dados = estado.dados!!
-            Text("Olá, ${primeiroNome(nome)}!", style = MaterialTheme.typography.headlineMedium)
+            Text("Olá, ${primeiroNome(nome)}!", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.titulo())
 
             CartaoDigital(nome = nome, cns = dados.cns)
 
-            Text("O que você quer fazer?", style = MaterialTheme.typography.titleMedium)
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Atalho("Meu código de atendimento", "Mostrar no balcão", Icons.Filled.Lock, Modifier.weight(1f)) { onAbrir(Rotas.TOKEN) }
-                Atalho("Procurar remédios e unidades", "Ver o que tem perto", Icons.Filled.Search, Modifier.weight(1f)) { onAbrir(Rotas.CONSULTA) }
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-                Atalho("Meus sinais de saúde", "Pressão, glicemia, peso", Icons.Filled.Favorite, Modifier.weight(1f)) { onAbrir(Rotas.SINAIS) }
-                Atalho("Meus documentos", "RG, laudos, receitas", Icons.AutoMirrored.Filled.List, Modifier.weight(1f)) { onAbrir(Rotas.DOCUMENTOS) }
+            TituloSecao("O que você quer fazer?")
+            // Com letra muito grande (acessibilidade do Android), os atalhos ficam um embaixo do outro,
+            // para nenhuma palavra ser quebrada no meio.
+            val atalhos = listOf(
+                Triple("Meu código de atendimento", "Mostrar no balcão", Icons.Filled.Lock) to Rotas.TOKEN,
+                Triple("Procurar remédios e unidades", "Ver o que tem perto", Icons.Filled.Search) to Rotas.CONSULTA,
+                Triple("Meus sinais de saúde", "Pressão, glicemia, peso", Icons.Filled.Favorite) to Rotas.SINAIS,
+                Triple("Meus documentos", "RG, laudos, receitas", Icons.AutoMirrored.Filled.List) to Rotas.DOCUMENTOS,
+            )
+            val colunas = if (LocalDensity.current.fontScale >= 1.4f) 1 else 2
+            atalhos.chunked(colunas).forEach { linha ->
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                    linha.forEach { (t, rota) -> Atalho(t.first, t.second, t.third, Modifier.weight(1f)) { onAbrir(rota) } }
+                }
             }
             BotaoTexto("Como funciona o Cartão SUS?", onClick = { ajuda = true })
 
-            Text("Avisos", style = MaterialTheme.typography.titleMedium)
+            TituloSecao("Avisos")
             if (dados.alertas.isEmpty()) {
                 Aviso("Tudo certo! Você não tem avisos no momento.", TomAviso.SUCESSO)
             } else {
@@ -160,8 +174,10 @@ private fun primeiroNome(nome: String) = nome.trim().substringBefore(' ').ifBlan
 
 @Composable
 private fun CartaoDigital(nome: String, cns: String?) {
+    // Para o leitor de tela, o cartão vira uma frase só, com o número dito em grupos de dígitos.
+    val falado = "Cartão SUS de $nome. Número do cartão: " + (cns?.let { Fala.cns(it) } ?: "não informado")
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = falado },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -191,12 +207,12 @@ internal fun formatarCns(cns: String): String = cns.chunked(3).take(1).joinToStr
 @Composable
 private fun Atalho(titulo: String, dica: String, icone: ImageVector, modifier: Modifier, onClick: () -> Unit) {
     Card(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClickLabel = "abrir", role = Role.Button, onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = MaterialTheme.shapes.medium,
     ) {
-        Column(modifier = Modifier.padding(14.dp).height(128.dp), verticalArrangement = Arrangement.SpaceBetween) {
+        Column(modifier = Modifier.padding(14.dp).heightIn(min = 128.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(48.dp)) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(icone, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(26.dp))

@@ -52,6 +52,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.edu.cartaosus.data.AcessoResumo
+import br.edu.cartaosus.domain.Fala
+import br.edu.cartaosus.ui.comum.TituloSecao
+import br.edu.cartaosus.ui.comum.anunciar
+import br.edu.cartaosus.ui.comum.titulo
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import br.edu.cartaosus.data.CidadaoRepository
 import br.edu.cartaosus.data.Erros
 import br.edu.cartaosus.data.SessionStore
@@ -176,7 +181,7 @@ fun TokenScreen(viewModel: TokenViewModel) {
             CartaoSecao {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Filled.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
-                    Text("Falta o código secreto", style = MaterialTheme.typography.titleMedium)
+                    Text("Falta o código secreto", style = MaterialTheme.typography.titleMedium, modifier = Modifier.titulo())
                 }
                 Text(
                     "Este aparelho ainda não tem o código secreto desta conta. Ele aparece uma vez quando você cria a conta.",
@@ -191,20 +196,22 @@ fun TokenScreen(viewModel: TokenViewModel) {
             val corBarra = if (acabando) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
 
             CartaoSecao(corFundo = MaterialTheme.colorScheme.primaryContainer) {
-                Text("Seu código", style = MaterialTheme.typography.titleMedium)
+                Text("Seu código", style = MaterialTheme.typography.titleMedium, modifier = Modifier.titulo())
                 Text(
                     codigo.chunked(3).joinToString(" "),
                     fontSize = 56.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.fillMaxWidth().semantics { contentDescription = "Seu código é " + codigo.toList().joinToString(" ") },
+                    // Lido dígito por dígito; quando o código troca, o TalkBack avisa sozinho.
+                    modifier = Modifier.fillMaxWidth().anunciar().semantics { contentDescription = "Seu código é " + Fala.soletrar(codigo) },
                 )
                 LinearProgressIndicator(
                     progress = { restante / 30f },
                     color = corBarra,
                     trackColor = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth().height(12.dp),
+                    // A barra é só visual; o tempo restante é falado pelo texto logo abaixo.
+                    modifier = Modifier.fillMaxWidth().height(12.dp).clearAndSetSemantics {},
                 )
                 Text(
                     if (acabando) "Vai mudar em $restante segundos" else "Muda em $restante segundos",
@@ -213,8 +220,9 @@ fun TokenScreen(viewModel: TokenViewModel) {
                 )
             }
             BotaoSecundario(
-                if (copiado) "Código copiado" else "Copiar código",
-                { area.setText(AnnotatedString(codigo)); copiado = true },
+                modifier = Modifier.anunciar(),
+                texto = if (copiado) "Código copiado" else "Copiar código",
+                onClick = { area.setText(AnnotatedString(codigo)); copiado = true },
             )
             LaunchedEffect(restante) { if (restante == 30) copiado = false }
 
@@ -233,7 +241,7 @@ fun TokenScreen(viewModel: TokenViewModel) {
             }
         }
 
-        Text("Últimos atendimentos", style = MaterialTheme.typography.titleMedium)
+        TituloSecao("Últimos atendimentos")
         ConteudoEstado(
             estado = acessos,
             vazio = acessos.dados.isNullOrEmpty(),
@@ -290,7 +298,10 @@ fun TokenScreen(viewModel: TokenViewModel) {
 private fun LinhaAcesso(a: AcessoResumo) {
     val ok = a.statusAutenticacao == "AUTORIZADO"
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clearAndSetSemantics {
+            contentDescription = (if (ok) "Atendimento autorizado" else "Tentativa recusada") +
+                " em ${dataAmigavel(a.dataHoraAcesso)}, unidade ${a.idUnidade}"
+        },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {

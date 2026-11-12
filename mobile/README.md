@@ -12,6 +12,8 @@ App do cidadão em Kotlin, Jetpack Compose (Material 3), MVVM, Retrofit com Gson
 | Saúde | Registro de medição, gráfico, alerta crítico e fila offline |
 | Meus documentos (atalho no Início) | Anexar PDF ou foto (carterinha, RG, CPF, laudo, cirurgia, receita, consulta) pelo seletor do Android, com permissão de leitura persistente. Só o caminho (URI), o tipo e o título ficam no celular (Room, tabela `documento_local`); nada vai para a API. Avisa se o arquivo foi apagado; permite abrir, editar e remover |
 
+**Acessibilidade:** o app funciona com o leitor de tela TalkBack, com letra grande (testado em 200%) e com contraste AA nos temas claro e escuro. Detalhes e roteiro de teste em [`../docs/acessibilidade.md`](../docs/acessibilidade.md).
+
 No cadastro, o botão "Salvar neste aparelho" guarda o segredo para o código TOTP funcionar sem digitação.
 
 ## Telas da F7

@@ -1,5 +1,6 @@
 package br.edu.cartaosus.ui.login
 
+import br.edu.cartaosus.ui.comum.titulo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +72,7 @@ fun LoginScreen(
                 }
             }
             Spacer(Modifier.height(16.dp))
-            Text("Cartão SUS", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary)
+            Text("Cartão SUS", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary, modifier = Modifier.titulo())
             Text(
                 "Seu cartão de saúde no celular",
                 style = MaterialTheme.typography.bodyLarge,

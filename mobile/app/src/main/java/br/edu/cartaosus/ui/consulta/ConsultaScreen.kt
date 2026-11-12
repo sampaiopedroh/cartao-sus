@@ -1,6 +1,14 @@
 package br.edu.cartaosus.ui.consulta
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.widget.Toast
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import br.edu.cartaosus.ui.comum.TituloSecao
+import br.edu.cartaosus.ui.comum.grupo
+import br.edu.cartaosus.ui.comum.titulo
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -223,7 +231,7 @@ private fun AbaRemedios(viewModel: ConsultaViewModel) {
             )
             BotaoSecundario("Buscar", viewModel::buscarRemedio, icone = Icons.Filled.Search)
 
-            Text(if (busca.isBlank()) "Remédios do catálogo" else "Resultado da busca", style = MaterialTheme.typography.titleMedium)
+            TituloSecao(if (busca.isBlank()) "Remédios do catálogo" else "Resultado da busca")
             ConteudoEstado(
                 estado = catalogo,
                 vazio = catalogo.dados.isNullOrEmpty(),
@@ -234,7 +242,7 @@ private fun AbaRemedios(viewModel: ConsultaViewModel) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     lista.forEach { r ->
                         Card(
-                            modifier = Modifier.fillMaxWidth().clickable { viewModel.escolherRemedio(r) },
+                            modifier = Modifier.fillMaxWidth().clickable(onClickLabel = "ver onde tem estoque", role = Role.Button) { viewModel.escolherRemedio(r) },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
                         ) {
@@ -248,8 +256,8 @@ private fun AbaRemedios(viewModel: ConsultaViewModel) {
                 }
             }
         } else {
-            BotaoTexto("← Voltar para a lista", viewModel::voltarParaLista)
-            Text(item.nome, style = MaterialTheme.typography.headlineSmall)
+            BotaoTexto("Voltar para a lista", viewModel::voltarParaLista)
+            Text(item.nome, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.titulo())
             Text(item.apresentacao, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             ConteudoEstado(
                 estado = estoque,
@@ -261,7 +269,7 @@ private fun AbaRemedios(viewModel: ConsultaViewModel) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Aviso("Estes dados são informados pelas unidades ao Ministério da Saúde e podem não estar atualizados no minuto. Confirme antes de ir.", TomAviso.INFO)
                     lista.take(10).forEach { m ->
-                        CartaoSecao {
+                        CartaoSecao(modifier = Modifier.grupo()) {
                             Text(m.estabelecimento ?: "Estabelecimento não informado", style = MaterialTheme.typography.titleSmall)
                             Text("Em estoque: ${m.quantidade?.toLong() ?: 0} unidades", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                             Text("Posição informada em ${m.dataPosicao?.let { dataAmigavel(it + "T00:00:00").substringBefore(" às") } ?: "—"}", style = MaterialTheme.typography.bodyMedium)
@@ -302,30 +310,39 @@ private fun AbaUnidades(viewModel: ConsultaViewModel) {
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     lista.forEach { item ->
+                        val bairro = item.unidade.bairro.lowercase().replaceFirstChar { it.uppercase() }
+                        val km = item.km?.let { "%.1f".format(it).replace('.', ',') }
                         CartaoSecao {
-                            Text(item.unidade.nome, style = MaterialTheme.typography.titleSmall)
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Icon(Icons.Filled.LocationOn, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
-                                Text(
-                                    "${rotuloTipo(item.unidade.tipo)} · ${item.unidade.bairro.lowercase().replaceFirstChar { it.uppercase() }}" +
-                                        (item.km?.let { " · %.1f km".format(it) } ?: ""),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    BotaoSecundario("Como chegar", {
-                                        val lat = item.unidade.latitude
-                                        val lon = item.unidade.longitude
-                                        if (lat != null && lon != null) {
-                                            contexto.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lon?q=$lat,$lon(${Uri.encode(item.unidade.nome)})")))
-                                        }
-                                    })
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    BotaoSecundario("Equipamentos", { viewModel.verEquipamentos(item.unidade.codigoCnes) })
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(6.dp),
+                                modifier = Modifier.clearAndSetSemantics {
+                                    contentDescription = "${item.unidade.nome}. ${rotuloTipo(item.unidade.tipo)}, bairro $bairro" +
+                                        (km?.let { ", a $it quilômetros do centro" } ?: "")
+                                },
+                            ) {
+                                Text(item.unidade.nome, style = MaterialTheme.typography.titleSmall)
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Icon(Icons.Filled.LocationOn, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
+                                    Text(
+                                        "${rotuloTipo(item.unidade.tipo)} · $bairro" + (km?.let { " · $it km" } ?: ""),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
                                 }
                             }
+                            // Botões um embaixo do outro: com letra grande, lado a lado eles cortariam o texto.
+                            BotaoSecundario("Como chegar", {
+                                val lat = item.unidade.latitude
+                                val lon = item.unidade.longitude
+                                if (lat != null && lon != null) {
+                                    try {
+                                        contexto.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lon?q=$lat,$lon(${Uri.encode(item.unidade.nome)})")))
+                                    } catch (e: ActivityNotFoundException) {
+                                        Toast.makeText(contexto, "Nenhum aplicativo de mapas instalado.", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }, descricao = "Como chegar a ${item.unidade.nome}")
+                            BotaoSecundario("Equipamentos", { viewModel.verEquipamentos(item.unidade.codigoCnes) },
+                                descricao = "Ver equipamentos de ${item.unidade.nome}")
                         }
                     }
                 }

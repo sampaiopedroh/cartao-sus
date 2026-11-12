@@ -152,6 +152,11 @@ Cada tela trata os três estados (carregando, vazio e erro com "Tentar de novo")
                   + figura("f8_07_sinais_alerta.png", "Alerta crítico de pressão")
                   + figura("f8_08_offline_pendente.png", "Medição guardada sem conexão")
                   + """
+## Acessibilidade
+
+O aplicativo foi revisado para pessoas com deficiência visual: funciona com o leitor de tela TalkBack (telas nomeadas, títulos navegáveis, códigos lidos dígito por dígito, cartões lidos de uma vez, avisos anunciados, gráfico descrito em texto), com letra grande (testado com a fonte do sistema em 200%) e com contraste de 4,5:1 ou mais nos temas claro e escuro, verificado por teste automático. Nada depende só da cor. Detalhes em `docs/acessibilidade.md`.
+
+""" + figura("a11y-fonte-200-inicio.png", "Início com a fonte do sistema em 200%") + """
 ## Navegação e usabilidade
 
 A barra inferior tem quatro abas com ícone e texto (Início, Atendimento, Consultar e Saúde). O botão Início volta à tela inicial a partir de qualquer aba, e o botão Voltar do sistema também. Sair da conta pede confirmação.

@@ -38,7 +38,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -57,11 +59,16 @@ fun BotaoPrincipal(
     habilitado: Boolean = true,
     carregando: Boolean = false,
     icone: ImageVector? = null,
+    descricao: String? = null,
 ) {
     Button(
         onClick = onClick,
         enabled = habilitado && !carregando,
-        modifier = modifier.fillMaxWidth().heightIn(min = AlturaBotao),
+        modifier = modifier.fillMaxWidth().heightIn(min = AlturaBotao)
+            .semantics {
+                if (carregando) stateDescription = "Aguarde, carregando"
+                if (descricao != null) contentDescription = descricao
+            },
         shape = MaterialTheme.shapes.medium,
     ) {
         if (carregando) {
@@ -88,10 +95,13 @@ fun BotaoSecundario(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icone: ImageVector? = null,
+    descricao: String? = null,
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().heightIn(min = AlturaBotao),
+        // "descricao" deixa claro, para o leitor de tela, a quê o botão se refere (ex.: "Como chegar à UBS X").
+        modifier = modifier.fillMaxWidth().heightIn(min = AlturaBotao)
+            .semantics { if (descricao != null) contentDescription = descricao },
         shape = MaterialTheme.shapes.medium,
     ) {
         if (icone != null) {
@@ -103,10 +113,10 @@ fun BotaoSecundario(
 }
 
 @Composable
-fun BotaoTexto(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun BotaoTexto(texto: String, onClick: () -> Unit, modifier: Modifier = Modifier, descricao: String? = null) {
     TextButton(
         onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
+        modifier = modifier.heightIn(min = 48.dp).semantics { if (descricao != null) contentDescription = descricao },
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
     ) {
         Text(texto, style = MaterialTheme.typography.labelLarge)
@@ -146,7 +156,7 @@ fun CampoTexto(
         keyboardOptions = KeyboardOptions(keyboardType = teclado, imeAction = acaoIme),
         keyboardActions = KeyboardActions(onDone = { aoConfirmar() }, onSearch = { aoConfirmar() }),
         visualTransformation = if (senha && !senhaVisivel) PasswordVisualTransformation() else mascara,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().semantics { if (erro != null) error(erro) },
     )
 }
 
@@ -156,7 +166,7 @@ fun Titulo(texto: String, modifier: Modifier = Modifier) {
         texto,
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier.semantics { contentDescription = texto },
+        modifier = modifier.titulo(),
     )
 }
 
@@ -176,14 +186,22 @@ fun Aviso(
         TomAviso.ATENCAO -> Triple(MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.colorScheme.onTertiaryContainer, Icons.Filled.Warning)
         TomAviso.ERRO -> Triple(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, Icons.Filled.Warning)
     }
+    // A cor e o ícone não chegam a quem não enxerga: o tipo do aviso também é falado.
+    val tipoFalado = when (tom) {
+        TomAviso.INFO -> "Informação"
+        TomAviso.SUCESSO -> "Tudo certo"
+        TomAviso.ATENCAO -> "Atenção"
+        TomAviso.ERRO -> "Importante"
+    }
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .then(if (tom == TomAviso.ERRO || tom == TomAviso.ATENCAO) Modifier.anunciar(urgente = tom == TomAviso.ERRO) else Modifier),
         colors = CardDefaults.cardColors(containerColor = fundo, contentColor = conteudo),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Icon(icone, contentDescription = null, modifier = Modifier.size(28.dp))
+            Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.grupo()) {
+                Icon(icone, contentDescription = "$tipoFalado:", modifier = Modifier.size(28.dp))
                 Text(texto, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
             }
             acao?.invoke()
@@ -194,7 +212,7 @@ fun Aviso(
 @Composable
 fun EstadoCarregando(mensagem: String = "Carregando...", modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(32.dp),
+        modifier = modifier.fillMaxWidth().padding(32.dp).grupo().anunciar(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -206,7 +224,7 @@ fun EstadoCarregando(mensagem: String = "Carregando...", modifier: Modifier = Mo
 @Composable
 fun EstadoVazio(titulo: String, texto: String? = null, icone: ImageVector = Icons.Filled.Info, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(24.dp),
+        modifier = modifier.fillMaxWidth().padding(24.dp).grupo(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
@@ -253,4 +271,10 @@ fun CartaoSecao(
 @Composable
 fun TelaCheia(conteudo: @Composable () -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { conteudo() }
+}
+
+// Título de seção visível e navegável pelo leitor de tela.
+@Composable
+fun TituloSecao(texto: String, modifier: Modifier = Modifier) {
+    Text(texto, style = MaterialTheme.typography.titleMedium, modifier = modifier.titulo())
 }

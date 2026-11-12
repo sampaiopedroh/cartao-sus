@@ -26,7 +26,7 @@ object Cores {
     val AtencaoClaro = Color(0xFFFFEFD1)
 }
 
-private val Claro = lightColorScheme(
+internal val Claro = lightColorScheme(
     primary = Cores.Azul,
     onPrimary = Color.White,
     primaryContainer = Cores.AzulClaro,
@@ -51,7 +51,7 @@ private val Claro = lightColorScheme(
     outline = Color(0xFF5F6B7A),
 )
 
-private val Escuro = darkColorScheme(
+internal val Escuro = darkColorScheme(
     primary = Color(0xFFA9C7FF),
     onPrimary = Color(0xFF002F67),
     primaryContainer = Color(0xFF0B4FA8),

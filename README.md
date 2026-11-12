@@ -125,4 +125,4 @@ Como o grupo conduziu e validou o trabalho:
 
 ## Resultados dos testes
 
-Consolidados em [docs/evidencia-testes/RELATORIO.md](docs/evidencia-testes/RELATORIO.md): 100 casos aprovados (12 unitários, 8 de contrato, 12 de integração, 18 manuais e 50 do aplicativo).
+Consolidados em [docs/evidencia-testes/RELATORIO.md](docs/evidencia-testes/RELATORIO.md): 110 casos aprovados (12 unitários, 8 de contrato, 12 de integração, 19 manuais e 59 do aplicativo).

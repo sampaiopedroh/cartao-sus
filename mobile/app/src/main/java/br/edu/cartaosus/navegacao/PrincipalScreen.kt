@@ -1,5 +1,7 @@
 package br.edu.cartaosus.navegacao
 
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -35,6 +37,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.edu.cartaosus.CartaoApp
+import br.edu.cartaosus.ui.comum.titulo
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import br.edu.cartaosus.ui.consulta.ConsultaScreen
 import br.edu.cartaosus.ui.consulta.ConsultaViewModel
 import br.edu.cartaosus.ui.dashboard.DashboardScreen
@@ -78,7 +83,19 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(titulo, style = MaterialTheme.typography.titleLarge) },
+                title = {
+                    // A barra de título tem altura fixa: o título cresce até 1,2x e, se não couber, termina em "...".
+                    val escala = LocalDensity.current.fontScale
+                    val base = MaterialTheme.typography.titleLarge.fontSize
+                    Text(
+                        titulo,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = if (escala > 1.2f) base * (1.2f / escala) else base,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.titulo(),
+                    )
+                },
                 navigationIcon = {
                     if (emDocumentos) {
                         IconButton(onClick = { navegador.popBackStack() }) {
@@ -104,7 +121,19 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
                         selected = rotaAtual == aba.rota || (emDocumentos && aba.rota == Rotas.INICIO),
                         onClick = { navegador.irParaAba(aba.rota) },
                         icon = { Icon(aba.icone, contentDescription = null) },
-                        label = { Text(aba.rotulo, style = MaterialTheme.typography.labelMedium) },
+                        // A barra tem 4 abas lado a lado: o rótulo fica no tamanho padrão para não cortar a palavra;
+                        // o nome completo continua sendo lido pelo TalkBack.
+                        label = {
+                            val escala = LocalDensity.current.fontScale
+                            val base = MaterialTheme.typography.labelMedium.fontSize
+                            Text(
+                                aba.rotulo,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontSize = if (escala > 1f) base / escala else base,
+                                maxLines = 1,
+                                softWrap = false,
+                            )
+                        },
                         alwaysShowLabel = true,
                     )
                 }
@@ -115,7 +144,8 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
         NavHost(
             navController = navegador,
             startDestination = Rotas.INICIO,
-            modifier = Modifier.padding(espaco),
+            // O nome da tela muda junto com a aba: o TalkBack anuncia para onde a pessoa foi.
+            modifier = Modifier.padding(espaco).semantics { paneTitle = titulo },
         ) {
             composable(Rotas.INICIO) {
                 val viewModel: DashboardViewModel = viewModel(initializer = { DashboardViewModel(app.cidadao) })

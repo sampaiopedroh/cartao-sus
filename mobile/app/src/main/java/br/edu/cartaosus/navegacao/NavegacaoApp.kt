@@ -1,5 +1,6 @@
 package br.edu.cartaosus.navegacao
 
+import br.edu.cartaosus.ui.comum.TelaNomeada
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,19 +64,19 @@ fun NavegacaoApp() {
 
         composable(Rotas.LOGIN) {
             val viewModel: LoginViewModel = viewModel(initializer = { LoginViewModel(app.repositorio) })
-            LoginScreen(
+            TelaNomeada("Entrar no Cartão SUS") { LoginScreen(
                 viewModel = viewModel,
                 onEntrou = {
                     nome = app.sessao.nome ?: ""
                     navegador.navigate(Rotas.PRINCIPAL) { popUpTo(Rotas.LOGIN) { inclusive = true } }
                 },
                 onCriarConta = { navegador.navigate(Rotas.CADASTRO) },
-            )
+            ) }
         }
 
         composable(Rotas.CADASTRO) {
             val viewModel: CadastroViewModel = viewModel(initializer = { CadastroViewModel(app.repositorio, app.sessao) })
-            CadastroScreen(viewModel = viewModel, onVoltar = { navegador.popBackStack() })
+            TelaNomeada("Criar conta") { CadastroScreen(viewModel = viewModel, onVoltar = { navegador.popBackStack() }) }
         }
 
         composable(Rotas.PRINCIPAL) {

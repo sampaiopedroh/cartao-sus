@@ -31,6 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import br.edu.cartaosus.domain.Fala
+import br.edu.cartaosus.ui.comum.TituloSecao
+import br.edu.cartaosus.ui.comum.titulo
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -217,7 +223,7 @@ fun SinaisScreen(viewModel: SinaisViewModel, onVerUnidades: () -> Unit) {
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("O que você quer registrar?", style = MaterialTheme.typography.titleMedium)
+        TituloSecao("O que você quer registrar?")
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Grupo.entries.forEach { g ->
                 FilterChip(selected = grupo == g, onClick = { viewModel.escolher(g) }, label = { Text(g.rotulo, style = MaterialTheme.typography.labelLarge) })
@@ -233,7 +239,7 @@ fun SinaisScreen(viewModel: SinaisViewModel, onVerUnidades: () -> Unit) {
         }
 
         CartaoSecao {
-            Text("Nova medição", style = MaterialTheme.typography.titleMedium)
+            Text("Nova medição", style = MaterialTheme.typography.titleMedium, modifier = Modifier.titulo())
             if (grupo == Grupo.PRESSAO) {
                 CampoTexto(valorA, viewModel::alterarA, "Pressão máxima (o número maior)", ajuda = "Exemplo: 120", teclado = KeyboardType.Number, sufixo = "mmHg")
                 CampoTexto(valorB, viewModel::alterarB, "Pressão mínima (o número menor)", ajuda = "Exemplo: 80", teclado = KeyboardType.Number, acaoIme = ImeAction.Done, aoConfirmar = viewModel::registrar, sufixo = "mmHg")
@@ -263,7 +269,7 @@ fun SinaisScreen(viewModel: SinaisViewModel, onVerUnidades: () -> Unit) {
             null -> Unit
         }
 
-        Text("Seu histórico", style = MaterialTheme.typography.titleMedium)
+        TituloSecao("Seu histórico")
         ConteudoEstado(
             estado = historico,
             vazio = historico.dados?.linhas.isNullOrEmpty(),
@@ -274,12 +280,12 @@ fun SinaisScreen(viewModel: SinaisViewModel, onVerUnidades: () -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 val maiorSerie = h.series.maxOf { it.valores.size }
                 if (!Grafico.poucosDados(maiorSerie)) {
-                    CartaoSecao { GraficoLinhas(h.series) }
+                    CartaoSecao { GraficoLinhas(h.series, grupo.unidade) }
                 } else {
                     Text("O gráfico aparece quando houver pelo menos duas medições.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 h.linhas.take(10).forEach { (data, texto) ->
-                    CartaoSecao {
+                    CartaoSecao(modifier = Modifier.clearAndSetSemantics { contentDescription = Fala.medida(texto) + ", em " + data }) {
                         Text(texto, style = MaterialTheme.typography.titleSmall)
                         Text(data, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
@@ -291,7 +297,7 @@ fun SinaisScreen(viewModel: SinaisViewModel, onVerUnidades: () -> Unit) {
 
 // Gráfico de linha com Canvas: escala nos dois eixos e legenda (sem biblioteca externa).
 @Composable
-private fun GraficoLinhas(series: List<Serie>) {
+private fun GraficoLinhas(series: List<Serie>, unidade: String) {
     val todos = series.flatMap { it.valores }
     val menor = todos.min()
     val maior = todos.max()
@@ -299,12 +305,14 @@ private fun GraficoLinhas(series: List<Serie>) {
     val cinza = MaterialTheme.colorScheme.outline
     val referencia = series.first()
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    // Quem não enxerga o desenho ouve um resumo: quantidade, valor mais recente, menor, maior e tendência.
+    val resumo = series.joinToString(" ") { Fala.resumoSerie(it.nome, Fala.medida(unidade), it.valores) }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.clearAndSetSemantics { contentDescription = resumo }) {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
             series.forEachIndexed { i, s ->
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Surface(shape = CircleShape, color = cores[i % cores.size], modifier = Modifier.size(12.dp)) {}
-                    Text(s.nome, style = MaterialTheme.typography.bodySmall)
+                    Text(s.nome + if (i == 1) " (tracejada)" else " (contínua)", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -326,7 +334,8 @@ private fun GraficoLinhas(series: List<Serie>) {
                         val y = size.height - p * size.height
                         if (k == 0) caminho.moveTo(x, y) else caminho.lineTo(x, y)
                     }
-                    drawPath(caminho, color = cores[i % cores.size], style = Stroke(width = 6f))
+                    // A segunda linha é tracejada: dá para diferenciar mesmo sem distinguir as cores.
+                    drawPath(caminho, color = cores[i % cores.size], style = Stroke(width = 6f, pathEffect = if (i == 1) PathEffect.dashPathEffect(floatArrayOf(18f, 12f)) else null))
                     pontos.forEachIndexed { k, p -> drawCircle(color = cores[i % cores.size], radius = 8f, center = Offset(k * passo, size.height - p * size.height)) }
                 }
             }

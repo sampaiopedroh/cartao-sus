@@ -49,6 +49,9 @@ import br.edu.cartaosus.ui.comum.BotaoSecundario
 import br.edu.cartaosus.ui.comum.CampoTexto
 import br.edu.cartaosus.ui.comum.EstadoVazio
 import br.edu.cartaosus.ui.comum.TomAviso
+import br.edu.cartaosus.ui.comum.grupo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import br.edu.cartaosus.ui.dashboard.dataAmigavel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -180,20 +183,22 @@ fun DocumentosScreen(viewModel: DocumentosViewModel) {
                     shape = MaterialTheme.shapes.medium,
                 ) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                      Column(Modifier.grupo(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(TipoDocumento.de(doc.tipo).rotulo, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                         Text(doc.titulo, style = MaterialTheme.typography.titleMedium)
                         Text("Anexado em " + SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR")).format(Date(doc.adicionadoEm)),
                             style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                      }
                         if (sumiu) {
                             Aviso("Não encontramos este arquivo no celular. Ele pode ter sido apagado ou movido.", TomAviso.ATENCAO)
                         }
                         Spacer(Modifier.height(4.dp))
-                        if (!sumiu) BotaoPrincipal(texto = "Abrir", onClick = { abrirArquivo(context, doc) })
+                        if (!sumiu) BotaoPrincipal(texto = "Abrir", onClick = { abrirArquivo(context, doc) }, descricao = "Abrir ${doc.titulo}")
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            TextButton(onClick = {
+                            TextButton(modifier = Modifier.semantics { contentDescription = "Editar ${doc.titulo}" }, onClick = {
                                 rascunho = Rascunho(doc.id, doc.uri, TipoDocumento.de(doc.tipo), doc.titulo, doc.adicionadoEm)
                             }) { Text("Editar", style = MaterialTheme.typography.labelLarge) }
-                            TextButton(onClick = { removendo = doc }) { Text("Remover", style = MaterialTheme.typography.labelLarge) }
+                            TextButton(modifier = Modifier.semantics { contentDescription = "Remover ${doc.titulo}" }, onClick = { removendo = doc }) { Text("Remover", style = MaterialTheme.typography.labelLarge) }
                         }
                     }
                 }

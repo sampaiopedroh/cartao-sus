@@ -11,7 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -77,12 +78,16 @@ fun DialogoCompartilhar(
                     Text("Escolha só o que o atendente precisa ver.", style = MaterialTheme.typography.bodyLarge)
                     documentos.forEach { d ->
                         val marcado = d.id in marcados
-                        val alternar = { if (marcado) marcados.remove(d.id) else marcados.add(d.id); Unit }
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth().clickable(onClick = alternar).padding(vertical = 4.dp),
+                            // A linha inteira é uma caixa de seleção: o TalkBack lê "marcada" ou "não marcada".
+                            modifier = Modifier.fillMaxWidth().toggleable(
+                                value = marcado,
+                                role = Role.Checkbox,
+                                onValueChange = { if (it) marcados.add(d.id) else marcados.remove(d.id) },
+                            ).padding(vertical = 4.dp),
                         ) {
-                            Checkbox(checked = marcado, onCheckedChange = { alternar() })
+                            Checkbox(checked = marcado, onCheckedChange = null)
                             Column {
                                 Text(d.titulo, style = MaterialTheme.typography.titleSmall)
                                 Text(TipoDocumento.de(d.tipo).rotulo, style = MaterialTheme.typography.bodyMedium,

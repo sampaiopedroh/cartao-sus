@@ -5,9 +5,10 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 ## Já concluído
 
 - MVP completo: banco de dados, API, aplicativo Android, sensores simulados e documentação (fases F0 a F9).
-- 100 casos de teste aprovados (12 unitários, 8 de contrato, 12 de integração, 18 manuais e 50 do aplicativo), registrados em `docs/evidencia-testes/RELATORIO.md`.
+- 110 casos de teste aprovados (12 unitários, 8 de contrato, 12 de integração, 19 manuais e 59 do aplicativo), registrados em `docs/evidencia-testes/RELATORIO.md`.
 - README final com a ordem completa de execução, verificada com um clone limpo do repositório.
 - Documentação de decisões (ADR) em `docs/`.
+- Revisão de acessibilidade para pessoas com deficiência visual (TalkBack, letra em 200%, contraste AA testado), em `docs/acessibilidade.md`.
 - Revisão de UX do app (abas Início, Atendimento, Consultar e Saúde, fontes maiores, botão Início corrigido), tela **Meus documentos** e compartilhamento de documentos depois da validação do código.
 - Coleção do Postman reescrita como fluxo executável (26 requisições, 39 testes) e executada no Newman sem falhas, duas vezes seguidas (`docs/evidencia-testes/f10-newman.txt`).
 - Vulnerabilidades de dependências corrigidas (`MySqlConnector` 2.6.2 e `Pkcs` 10.0.15), build sem avisos e testes verdes.
@@ -39,6 +40,8 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 - **Compartilhamento liberado pela conta, não pelo aparelho:** limitação aceita. Explicação, motivo de não mudar agora e caminho futuro em `docs/adr/ADR-limitacoes-aceitas.md`.
 - **Teste de clone limpo no Android** exige o `mobile/local.properties` com o caminho do SDK (já descrito no README).
 - **Estoque do BNAFAR muda com o tempo:** é o comportamento esperado (dados reais do governo). Explicação em `docs/adr/ADR-limitacoes-aceitas.md`. Na gravação do vídeo, escolha na hora um remédio com estoque.
+
+- **Teste com TalkBack feito por uma pessoa:** recomendado antes da entrega (roteiro em `docs/acessibilidade.md`). A navegação item a item não pôde ser automatizada.
 
 ## Decisões já tomadas que o professor pode questionar
 

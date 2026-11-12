@@ -1,5 +1,14 @@
 package br.edu.cartaosus.ui.cadastro
 
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import br.edu.cartaosus.domain.Fala
+import br.edu.cartaosus.ui.comum.anunciar
+import br.edu.cartaosus.ui.comum.titulo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,7 +88,7 @@ fun CadastroScreen(viewModel: CadastroViewModel, onVoltar: () -> Unit) {
             Text("Preencha seus dados. Leva menos de um minuto.", style = MaterialTheme.typography.bodyLarge)
 
             CartaoSecao {
-                Text("Seus dados", style = MaterialTheme.typography.titleMedium)
+                Text("Seus dados", style = MaterialTheme.typography.titleMedium, modifier = Modifier.titulo())
                 CampoTexto(form.nome, { viewModel.alterar("nome", it) }, "Nome completo", erro = erros.mapa["nomeCompleto"])
                 CampoTexto(
                     form.nascimento, { viewModel.alterar("nascimento", it) }, "Data de nascimento",
@@ -98,7 +107,7 @@ fun CadastroScreen(viewModel: CadastroViewModel, onVoltar: () -> Unit) {
             }
 
             CartaoSecao {
-                Text("Seu acesso", style = MaterialTheme.typography.titleMedium)
+                Text("Seu acesso", style = MaterialTheme.typography.titleMedium, modifier = Modifier.titulo())
                 CampoTexto(form.login, { viewModel.alterar("login", it) }, "E-mail", erro = erros.mapa["login"], teclado = KeyboardType.Email)
                 CampoTexto(
                     form.senha, { viewModel.alterar("senha", it) }, "Senha",
@@ -137,22 +146,26 @@ private fun ConcluidoConta(
 
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
         Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(40.dp))
-        Text("Conta criada!", style = MaterialTheme.typography.headlineSmall)
+        Text("Conta criada!", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.titulo().anunciar())
     }
     Text(mensagem, style = MaterialTheme.typography.bodyLarge)
 
     CartaoSecao(corFundo = MaterialTheme.colorScheme.primaryContainer) {
-        Text("Seu código secreto", style = MaterialTheme.typography.titleMedium)
+        Text("Seu código secreto", style = MaterialTheme.typography.titleMedium, modifier = Modifier.titulo())
         Text(
             segredo.chunked(4).joinToString(" "),
             style = MaterialTheme.typography.titleLarge,
             fontFamily = FontFamily.Monospace,
+            // Lido letra por letra, em blocos de 4, para dar para anotar ouvindo.
+            modifier = Modifier.semantics { contentDescription = "Código secreto: " + Fala.segredo(segredo) },
         )
         Text(
             "Ele gera o código que você mostra no atendimento. Aparece só agora, por isso salve neste aparelho.",
             style = MaterialTheme.typography.bodyMedium,
         )
-        BotaoSecundario("Copiar código secreto", { area.setText(AnnotatedString(segredo)) })
+        var copiado by remember { mutableStateOf(false) }
+        BotaoSecundario(if (copiado) "Código copiado" else "Copiar código secreto", { area.setText(AnnotatedString(segredo)); copiado = true },
+            modifier = Modifier.anunciar())
     }
 
     if (salvo) {

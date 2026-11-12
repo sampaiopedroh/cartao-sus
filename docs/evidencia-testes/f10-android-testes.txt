@@ -1,11 +1,13 @@
-Testes unitarios do aplicativo Android (./gradlew testDebugUnitTest), 11/11/2026
+Testes unitarios do aplicativo Android (./gradlew testDebugUnitTest), 12/11/2026
 br.edu.cartaosus.data.ErrosTest: 6 testes, 0 falhas
 br.edu.cartaosus.domain.ClassificacaoTest: 7 testes, 0 falhas
 br.edu.cartaosus.domain.DistanciaTest: 2 testes, 0 falhas
+br.edu.cartaosus.domain.FalaTest: 7 testes, 0 falhas
 br.edu.cartaosus.domain.GraficoTest: 4 testes, 0 falhas
 br.edu.cartaosus.domain.TipoDocumentoTest: 4 testes, 0 falhas
 br.edu.cartaosus.domain.ValidacaoDataBrTest: 5 testes, 0 falhas
 br.edu.cartaosus.domain.ValidacaoTest: 11 testes, 0 falhas
 br.edu.cartaosus.security.TotpGeneratorTest: 7 testes, 0 falhas
 br.edu.cartaosus.ui.comum.MascaraTest: 4 testes, 0 falhas
-TOTAL: 50 testes, 0 falhas
+br.edu.cartaosus.ui.tema.ContrasteTest: 2 testes, 0 falhas
+TOTAL: 59 testes, 0 falhas
