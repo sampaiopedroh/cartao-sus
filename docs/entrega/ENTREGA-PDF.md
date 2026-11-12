@@ -464,10 +464,10 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 | Unitários (backend) | 12 (UT-01 a UT-12) | 12 PASS | `dotnet test --filter "Category!=Integracao"` | `f9-unitarios-contrato.txt` |
 | Contrato (backend) | 8 (CT-01 a CT-08) | 8 PASS | mesmo comando acima | `f9-unitarios-contrato.txt` |
 | Integração (MySQL) | 12 casos (IT-01 a IT-10, com IT-08 e IT-10 em dois casos) | 12 PASS | `backend/tests/run-integration.sh` | `f9-integracao.txt` |
-| Manuais | 18 (MT-01 a MT-18) | 18 PASS | roteiro manual (abaixo) | `mt-XX-*`, `ux-*` |
-| Unitários (aplicativo Android) | 50 | 50 PASS | `./gradlew testDebugUnitTest` | saída do Gradle (`mobile/`) |
+| Manuais | 19 (MT-01 a MT-19) | 19 PASS | roteiro manual (abaixo) | `mt-XX-*`, `ux-*` |
+| Unitários (aplicativo Android) | 59 | 59 PASS | `./gradlew testDebugUnitTest` | saída do Gradle (`mobile/`) |
 
-**Resultado geral: 100 de 100 casos aprovados, sem falhas** (12 + 8 + 12 + 18 + 50).
+**Resultado geral: 110 de 110 casos aprovados, sem falhas** (12 + 8 + 12 + 19 + 59).
 
 ### Testes manuais (MT)
 
@@ -490,12 +490,15 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 | MT-15 | Botão "Início" volta à tela inicial a partir de Saúde, Consultar e Atendimento; Voltar do sistema volta ao Início | app (emulador) | PASS | `ux-resumo.md`, `ux-inicio.png` |
 | MT-16 | Anexar documento pelo seletor do Android; o documento continua na lista depois de reiniciar o app e abre no visualizador | app (emulador) | PASS | `ux-documentos.png` |
 | MT-17 | Documento cujo arquivo foi apagado: aviso na lista e sem queda do app ao compartilhar | app (emulador) | PASS | `ux-documentos-arquivo-ausente.png` |
+| MT-19 | Acessibilidade: descrições para o leitor de tela na árvore de acessibilidade e layout com a fonte do sistema em 200% | app (emulador) | PASS | `a11y-fonte-200-inicio.png`, `a11y-fonte-200-atendimento.png`, `../acessibilidade.md` |
 | MT-18 | Compartilhamento só depois de o atendente validar o código (terminal responde `AUTORIZADO`); sem validação o botão não aparece | app e terminal | PASS | `ux-compartilhar-liberado.png`, `ux-compartilhar-android.png` |
 
 ### Problemas encontrados durante o projeto
 
 | Fase | Problema | Correção |
 |---|---|---|
+| F10 | Com a fonte em 200%, palavras quebravam no meio nos atalhos e na barra inferior, e o título da barra superior era cortado | Atalhos em uma coluna, botões empilhados, rótulos e título com tamanho limitado (MT-19) |
+| F10 | "Como chegar" fechava o app sem aplicativo de mapas | Erro tratado com aviso ao usuário |
 | F10 | Avisos de vulnerabilidade em `MySqlConnector` 2.5.0 (moderada) e `System.Security.Cryptography.Pkcs` 10.0.9 (alta) | Atualizados para 2.6.2 e 10.0.15; `dotnet list package --vulnerable` sem alertas e testes verdes |
 | F10 | A coleção do Postman era só a exportação do Swagger e não rodava de ponta a ponta (sem token, sem chave de dispositivo e sem variáveis de caminho) | Coleção reescrita em ordem, com 26 requisições e 39 testes; executada no Newman sem falhas (`f10-newman.txt`) |
 | F10 | O app fechava ao compartilhar um documento cujo arquivo o Android não permitia mais ler (`SecurityException`) | O app confere cada arquivo antes, ignora os ilegíveis e avisa o usuário (MT-17) |
@@ -516,6 +519,8 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 - Compartilhamento de documentos sem NFC real: a ideia é compartilhar as informações por NFC, mas, pelas limitações da simulação (sem leitor NFC físico nem HCE no emulador), o grupo optou por liberar o compartilhamento pelo seletor do Android depois que o atendente valida o código (ver `docs/adr/ADR-nfc-compartilhamento.md`).
 - O segredo TOTP fica no SharedPreferences do aplicativo, sem criptografia (SDD 7.4).
 - O anti-reuso do TOTP é em memória: vale para uma única instância da API.
+- O estoque do BNAFAR é consultado em tempo real e muda com o tempo; os testes conferem o formato da resposta, não a quantidade (ver `docs/adr/ADR-limitacoes-aceitas.md`).
+- O botão de compartilhar documentos é liberado pela conta, não pelo aparelho: se a mesma pessoa estiver logada em dois celulares, os dois mostram o botão. Não expõe dados a terceiros (ver `docs/adr/ADR-limitacoes-aceitas.md`).
 - A consulta de remédio usa o estoque de São Paulo; a API do BNAFAR não informa total de registros, então o `totalElements` é aproximado.
 - Cada pressão gera um alerta por leitura: sístole e diástole acima do limiar geram dois alertas.
 - As consultas Q2 e Q7 usam `NOW()` do banco, que está em UTC; a janela pode deslocar 3 horas em relação à hora local.
@@ -572,6 +577,14 @@ Cada tela trata os três estados (carregando, vazio e erro com "Tentar de novo")
 ![Medição guardada sem conexão](../evidencia-testes/f8_08_offline_pendente.png)
 
 *Medição guardada sem conexão*
+
+## Acessibilidade
+
+O aplicativo foi revisado para pessoas com deficiência visual: funciona com o leitor de tela TalkBack (telas nomeadas, títulos navegáveis, códigos lidos dígito por dígito, cartões lidos de uma vez, avisos anunciados, gráfico descrito em texto), com letra grande (testado com a fonte do sistema em 200%) e com contraste de 4,5:1 ou mais nos temas claro e escuro, verificado por teste automático. Nada depende só da cor. Detalhes em `docs/acessibilidade.md`.
+
+![Início com a fonte do sistema em 200%](../evidencia-testes/a11y-fonte-200-inicio.png)
+
+*Início com a fonte do sistema em 200%*
 
 ## Navegação e usabilidade
 
@@ -814,6 +827,8 @@ Como o grupo conduziu e validou o trabalho:
 - Compartilhamento de documentos sem NFC real: a ideia é compartilhar as informações por NFC, mas, pelas limitações da simulação (sem leitor NFC físico nem HCE no emulador), o grupo optou por liberar o compartilhamento pelo seletor do Android depois que o atendente valida o código (ver `docs/adr/ADR-nfc-compartilhamento.md`).
 - O segredo TOTP fica no SharedPreferences do aplicativo, sem criptografia (SDD 7.4).
 - O anti-reuso do TOTP é em memória: vale para uma única instância da API.
+- O estoque do BNAFAR é consultado em tempo real e muda com o tempo; os testes conferem o formato da resposta, não a quantidade (ver `docs/adr/ADR-limitacoes-aceitas.md`).
+- O botão de compartilhar documentos é liberado pela conta, não pelo aparelho: se a mesma pessoa estiver logada em dois celulares, os dois mostram o botão. Não expõe dados a terceiros (ver `docs/adr/ADR-limitacoes-aceitas.md`).
 - A consulta de remédio usa o estoque de São Paulo; a API do BNAFAR não informa total de registros, então o `totalElements` é aproximado.
 - Cada pressão gera um alerta por leitura: sístole e diástole acima do limiar geram dois alertas.
 - As consultas Q2 e Q7 usam `NOW()` do banco, que está em UTC; a janela pode deslocar 3 horas em relação à hora local.
@@ -841,7 +856,7 @@ A ideia continua sendo usar NFC para compartilhar as informações. Por limitaç
 
 - Funciona e é testável no emulador e em qualquer celular, sem hardware NFC.
 - O atendente recebe os arquivos pelo app que o celular oferecer (e-mail, mensagem, Quick Share), e não por toque.
-- Se outro aparelho gerar um atendimento da mesma conta, o botão também aparece.
+- Se outro aparelho da mesma conta for atendido, o botão também aparece. Não é risco de segurança (os aparelhos são do mesmo dono e o envio exige confirmação); a explicação completa e o motivo de não mudar agora estão em `ADR-limitacoes-aceitas.md`.
 
 ### Caminho para NFC real (trabalho futuro)
 
