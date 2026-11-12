@@ -92,3 +92,18 @@ Variáveis: `API_URL` (padrão `http://localhost:8080`), `IOT_KEY_TERMINAL_UBS`,
 - **Sem sensor físico.** O cartão é representado pelo CNS digitado, e a leitura NFC é simulada.
 - **Um alerta por leitura de pressão.** Sístole e diástole geram cada um o seu registro. Quando as duas passam do limiar, aparecem dois alertas para a mesma medição.
 - **Código TOTP no modo `--app`.** A geração usa o relógio da máquina onde o script roda.
+
+## Teste: código de atendimento e compartilhamento de documentos
+
+1. App no emulador, conta da Maria, aba **Atendimento** aberta e com o código secreto salvo.
+2. No terminal (com a API no ar):
+
+```bash
+SEGREDO_TOTP=<segredo da Maria> iot/.venv/bin/python iot/terminal_nfc.py --cns 898000000000000 --cnes 8530378 --app
+```
+
+3. A resposta é `AUTORIZADO`. Em até 5 segundos o app mostra "O atendente validou o seu código" e o botão **Compartilhar documentos**.
+4. Escolha os documentos e toque em Compartilhar: o app abre o compartilhamento do Android só com os arquivos marcados. A autorização vale para um envio; para outro é preciso um novo código validado.
+5. Com código errado (`--token 000000`) o botão não aparece.
+
+Os arquivos nunca passam pela API: só o app e o Android os enviam.

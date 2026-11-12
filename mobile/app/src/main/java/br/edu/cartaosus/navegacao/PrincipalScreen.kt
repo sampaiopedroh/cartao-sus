@@ -133,7 +133,7 @@ fun PrincipalScreen(app: CartaoApp, nome: String, onSair: () -> Unit) {
                 DocumentosScreen(viewModel = viewModel)
             }
             composable(Rotas.TOKEN) {
-                val viewModel: TokenViewModel = viewModel(initializer = { TokenViewModel(app.sessao, app.cidadao) })
+                val viewModel: TokenViewModel = viewModel(initializer = { TokenViewModel(app.sessao, app.cidadao, app.banco.documentos()) })
                 TokenScreen(viewModel = viewModel)
             }
             composable(Rotas.CONSULTA) {

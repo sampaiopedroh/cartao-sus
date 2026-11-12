@@ -7,7 +7,7 @@ App do cidadão em Kotlin, Jetpack Compose (Material 3), MVVM, Retrofit com Gson
 | Aba | O que faz |
 |---|---|
 | Início | Cartão digital, alertas com confirmação de entrega |
-| Atendimento | Código TOTP de 6 dígitos com contagem regressiva. Se o segredo não estiver salvo, use "Informar código secreto" (o segredo impresso no console da API ao cadastrar) |
+| Atendimento | (compartilha documentos depois que o atendente valida o código) Código TOTP de 6 dígitos com contagem regressiva. Se o segredo não estiver salvo, use "Informar código secreto" (o segredo impresso no console da API ao cadastrar) |
 | Consultar | Busca de remédio com estoque em São Paulo, unidades por distância, equipamentos e "Ver no mapa" |
 | Saúde | Registro de medição, gráfico, alerta crítico e fila offline |
 | Meus documentos (atalho no Início) | Anexar PDF ou foto (carterinha, RG, CPF, laudo, cirurgia, receita, consulta) pelo seletor do Android, com permissão de leitura persistente. Só o caminho (URI), o tipo e o título ficam no celular (Room, tabela `documento_local`); nada vai para a API. Avisa se o arquivo foi apagado; permite abrir, editar e remover |

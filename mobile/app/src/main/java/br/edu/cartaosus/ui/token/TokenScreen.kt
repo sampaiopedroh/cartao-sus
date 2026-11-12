@@ -61,9 +61,45 @@ import br.edu.cartaosus.ui.Estado
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TokenViewModel(private val sessao: SessionStore, private val repositorio: CidadaoRepository) : ViewModel() {
+class TokenViewModel(
+    private val sessao: SessionStore,
+    private val repositorio: CidadaoRepository,
+    private val documentosDao: br.edu.cartaosus.data.DocumentoDao,
+) : ViewModel() {
+    val documentos: StateFlow<List<br.edu.cartaosus.data.DocumentoLocal>> =
+        documentosDao.observar(sessao.idCidadao)
+            .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    // O compartilhamento só é liberado quando aparece um atendimento AUTORIZADO novo, depois que a tela abriu.
+    private var base: Long? = null
+    private val _liberado = MutableStateFlow(false)
+    val liberado: StateFlow<Boolean> = _liberado.asStateFlow()
+
+    private fun processar(lista: List<AcessoResumo>) {
+        val b = base
+        if (b == null) { base = lista.maxOfOrNull { it.idSessao } ?: 0L; return }
+        _liberado.value = lista.any { it.idSessao > b && it.statusAutenticacao == "AUTORIZADO" }
+    }
+
+    fun atualizarSilencioso() {
+        viewModelScope.launch {
+            try {
+                val lista = repositorio.acessos()
+                _acessos.value = Estado(carregando = false, dados = lista)
+                processar(lista)
+            } catch (_: Exception) {}
+        }
+    }
+
+    // Depois de compartilhar, a autorização é consumida: o próximo envio exige um novo código validado.
+    fun encerrarCompartilhamento() {
+        base = _acessos.value.dados?.maxOfOrNull { it.idSessao } ?: base
+        _liberado.value = false
+    }
+
     private val _segredo = MutableStateFlow(sessao.segredoDoUsuario())
     val segredo: StateFlow<String?> = _segredo.asStateFlow()
 
@@ -76,7 +112,9 @@ class TokenViewModel(private val sessao: SessionStore, private val repositorio: 
         _acessos.value = Estado(carregando = true)
         viewModelScope.launch {
             _acessos.value = try {
-                Estado(carregando = false, dados = repositorio.acessos())
+                val lista = repositorio.acessos()
+                processar(lista)
+                Estado(carregando = false, dados = lista)
             } catch (e: Exception) {
                 Estado(carregando = false, erro = Erros.mensagem(e))
             }
@@ -103,6 +141,18 @@ fun TokenScreen(viewModel: TokenViewModel) {
     var texto by remember { mutableStateOf("") }
     var invalido by remember { mutableStateOf(false) }
     var copiado by remember { mutableStateOf(false) }
+    val liberado by viewModel.liberado.collectAsState()
+    val documentos by viewModel.documentos.collectAsState()
+    var escolhendo by remember { mutableStateOf(false) }
+    val contexto = androidx.compose.ui.platform.LocalContext.current
+
+    // Confere a cada 5 segundos se o atendente já validou o código.
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(5_000)
+            viewModel.atualizarSilencioso()
+        }
+    }
 
     // Atualiza o código a cada 250 ms: ao virar o passo de 30 s, o código muda sem recarregar a tela.
     LaunchedEffect(Unit) {
@@ -167,6 +217,20 @@ fun TokenScreen(viewModel: TokenViewModel) {
                 { area.setText(AnnotatedString(codigo)); copiado = true },
             )
             LaunchedEffect(restante) { if (restante == 30) copiado = false }
+
+            if (liberado) {
+                br.edu.cartaosus.ui.comum.Aviso(
+                    "O atendente validou o seu código. Agora você pode mostrar seus documentos.",
+                    br.edu.cartaosus.ui.comum.TomAviso.SUCESSO,
+                )
+                BotaoPrincipal("Compartilhar documentos", { escolhendo = true })
+            } else {
+                Text(
+                    "Depois que o atendente validar o seu código, aparece aqui a opção de compartilhar documentos.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         Text("Últimos atendimentos", style = MaterialTheme.typography.titleMedium)
@@ -181,6 +245,18 @@ fun TokenScreen(viewModel: TokenViewModel) {
                 lista.take(8).forEach { a -> LinhaAcesso(a) }
             }
         }
+    }
+
+    if (escolhendo) {
+        br.edu.cartaosus.ui.documentos.DialogoCompartilhar(
+            documentos = documentos,
+            onCompartilhar = { escolhidos ->
+                escolhendo = false
+                br.edu.cartaosus.ui.documentos.compartilharDocumentos(contexto, escolhidos)
+                viewModel.encerrarCompartilhamento()
+            },
+            onFechar = { escolhendo = false },
+        )
     }
 
     if (informando) {
