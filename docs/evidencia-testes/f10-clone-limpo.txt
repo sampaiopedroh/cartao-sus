@@ -1,0 +1,13 @@
+Teste de clone limpo (F10), 11/11/2026
+Repositorio clonado de https://github.com/sampaiopedroh/cartao-sus.git em pasta nova, sem .env, bin/, build/ nem seed_dispositivos.sql.
+Seguido o README na ordem:
+  1. .env criado a partir do .env.example (valores de teste)  -> OK
+  2. docker compose up -d (MySQL healthy)                      -> OK
+  3. schema.sql e seed.sql                                      -> OK (4 usuarios, 16 unidades)
+  4. iot/gerar_chaves.py e seed_dispositivos.sql                -> OK (3 dispositivos)
+  5. API (dotnet run), Swagger em /swagger                      -> OK (HTTP 200)
+  6. dotnet test (unitarios e contrato): 23 aprovados, 0 falhas
+     tests/run-integration.sh (MySQL): 12 aprovados, 0 falhas
+  7. iot/tensiometro.py --cenario demo: HTTP 201 com alerta PRESSAO_CRITICA
+  8. mobile: ./gradlew assembleDebug testDebugUnitTest (com local.properties): APK gerado, 50 testes, 0 falhas
+Ajuste feito no README: o passo do aplicativo passou a citar o mobile/local.properties.

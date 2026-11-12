@@ -82,7 +82,7 @@ python3 -m venv iot/.venv && iot/.venv/bin/pip install -r iot/requirements.txt
 iot/.venv/bin/python iot/tensiometro.py --cenario demo
 ```
 
-**8. Rode o aplicativo** (opcional): abra a pasta `mobile/` no Android Studio ou rode `./gradlew installDebug`, com um emulador iniciado. Detalhes em [mobile/README.md](mobile/README.md).
+**8. Rode o aplicativo** (opcional): crie `mobile/local.properties` com `sdk.dir=/caminho/para/Android/sdk` (o Android Studio faz isso sozinho), abra a pasta `mobile/` no Android Studio ou rode `./gradlew installDebug`, com um emulador iniciado. Detalhes em [mobile/README.md](mobile/README.md).
 
 **Parar o ambiente** (mantém os dados): `docker compose down`. **Recomeçar do zero** (apaga o banco): `docker compose down -v`, e repita os passos 2 a 4.
 
