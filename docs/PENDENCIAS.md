@@ -36,9 +36,9 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 
 - **Histórico do git com um único autor.** O edital valoriza commits de todos os integrantes. Cada pessoa do grupo deve fazer commits com o próprio nome, se possível.
 - **Teste do aplicativo só no emulador.** Não houve teste em aparelho físico (o compartilhamento já foi testado no emulador com imagem e PDF).
-- **Compartilhamento sem NFC real.** O botão de compartilhar aparece quando surge um atendimento autorizado novo no histórico da conta; outro aparelho com a mesma conta também libera. Ver o ADR do NFC.
+- **Compartilhamento liberado pela conta, não pelo aparelho:** limitação aceita. Explicação, motivo de não mudar agora e caminho futuro em `docs/adr/ADR-limitacoes-aceitas.md`.
 - **Teste de clone limpo no Android** exige o `mobile/local.properties` com o caminho do SDK (já descrito no README).
-- **Estoque do BNAFAR** pode mudar com o tempo. Se algum medicamento do catálogo ficar sem estoque, a demonstração mostra a lista vazia.
+- **Estoque do BNAFAR muda com o tempo:** é o comportamento esperado (dados reais do governo). Explicação em `docs/adr/ADR-limitacoes-aceitas.md`. Na gravação do vídeo, escolha na hora um remédio com estoque.
 
 ## Decisões já tomadas que o professor pode questionar
 

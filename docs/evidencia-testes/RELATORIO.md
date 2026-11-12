@@ -61,6 +61,8 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 - Compartilhamento de documentos sem NFC real: a ideia é compartilhar as informações por NFC, mas, pelas limitações da simulação (sem leitor NFC físico nem HCE no emulador), o grupo optou por liberar o compartilhamento pelo seletor do Android depois que o atendente valida o código (ver `docs/adr/ADR-nfc-compartilhamento.md`).
 - O segredo TOTP fica no SharedPreferences do aplicativo, sem criptografia (SDD 7.4).
 - O anti-reuso do TOTP é em memória: vale para uma única instância da API.
+- O estoque do BNAFAR é consultado em tempo real e muda com o tempo; os testes conferem o formato da resposta, não a quantidade (ver `docs/adr/ADR-limitacoes-aceitas.md`).
+- O botão de compartilhar documentos é liberado pela conta, não pelo aparelho: se a mesma pessoa estiver logada em dois celulares, os dois mostram o botão. Não expõe dados a terceiros (ver `docs/adr/ADR-limitacoes-aceitas.md`).
 - A consulta de remédio usa o estoque de São Paulo; a API do BNAFAR não informa total de registros, então o `totalElements` é aproximado.
 - Cada pressão gera um alerta por leitura: sístole e diástole acima do limiar geram dois alertas.
 - As consultas Q2 e Q7 usam `NOW()` do banco, que está em UTC; a janela pode deslocar 3 horas em relação à hora local.

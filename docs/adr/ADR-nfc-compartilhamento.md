@@ -20,7 +20,7 @@ A ideia continua sendo usar NFC para compartilhar as informações. Por limitaç
 
 - Funciona e é testável no emulador e em qualquer celular, sem hardware NFC.
 - O atendente recebe os arquivos pelo app que o celular oferecer (e-mail, mensagem, Quick Share), e não por toque.
-- Se outro aparelho gerar um atendimento da mesma conta, o botão também aparece.
+- Se outro aparelho da mesma conta for atendido, o botão também aparece. Não é risco de segurança (os aparelhos são do mesmo dono e o envio exige confirmação); a explicação completa e o motivo de não mudar agora estão em `ADR-limitacoes-aceitas.md`.
 
 ## Caminho para NFC real (trabalho futuro)
 
