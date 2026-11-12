@@ -1,6 +1,6 @@
 # Cartão SUS Inteligente — Saúde Conectada
 
-Projeto da disciplina **Global Solution 2026/2 — 3ESOA (FIAP)**, tema CitizenTech.
+Projeto da disciplina **Global Solution 2026/2 — 3ESOA (FIAP)**, tema CitizenTech. Grupo **GateMinds**.
 
 Um cartão digital do cidadão para o SUS: consulta de disponibilidade de equipamentos e remédios, carteira de documentos e sinais vitais no aparelho, acolhimento presencial com código TOTP e alertas de saúde gerados por sensores simulados.
 

@@ -1,0 +1,13 @@
+GLOBAL SOLUTION 2026/2 - 3ESOA
+Projeto: Cartao SUS Inteligente (CitizenTech)
+
+Nome do grupo: GateMinds
+
+Integrantes:
+- Giovanna Mendonca Federico - RM564626
+- Leandro de Lima Cuminato - RM556035
+- Luciano Henrique Meriato Junior - RM554546
+- Pedro Henrique Alves Espirito Santo - RM558897
+- Pedro Henrique Ribeiro Sampaio - RM555613
+
+Link publico do video pitch: [PENDENTE]

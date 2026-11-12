@@ -13,8 +13,8 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 
 | # | Item | Responsável | Prazo sugerido |
 |---|---|---|---|
-| 1 | Nome do grupo | Grupo | Imediato |
-| 2 | Nome, RM e e-mail de cada integrante (hoje: Pedro Sampaio, RM555613) | Grupo | Imediato |
+| 1 | Nome do grupo: GateMinds (concluído) | Grupo | Concluído |
+| 2 | Nome e RM dos cinco integrantes (concluído; e-mails opcionais) | Grupo | Concluído |
 | 3 | Gravar o vídeo pitch de até 3 minutos, com o protótipo rodando (roteiro em `docs/planos/F10-plano-de-acao.md`) | Grupo | 16/11 |
 | 4 | Publicar o vídeo com acesso por link (YouTube não listado ou Google Drive) e testar em aba anônima | Grupo | 17/11 |
 | 5 | Confirmar a regra de uso de IA com o professor e preencher a declaração no `README.md` | Grupo | 17/11 |
