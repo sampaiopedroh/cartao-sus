@@ -1,6 +1,6 @@
 # Relatório final de testes — Cartão SUS Inteligente
 
-Execução consolidada da F9 (11/11/2026), com banco limpo recriado a partir de `schema.sql`, `seed.sql` e `gerar_chaves.py`. API e aplicativo na versão final do repositório.
+Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de UX, documentos e compartilhamento (casos MT-15 a MT-18), com banco limpo recriado a partir de `schema.sql`, `seed.sql` e `gerar_chaves.py`. API e aplicativo na versão final do repositório.
 
 ## Resumo
 
@@ -9,10 +9,10 @@ Execução consolidada da F9 (11/11/2026), com banco limpo recriado a partir de 
 | Unitários (backend) | 12 (UT-01 a UT-12) | 12 PASS | `dotnet test --filter "Category!=Integracao"` | `f9-unitarios-contrato.txt` |
 | Contrato (backend) | 8 (CT-01 a CT-08) | 8 PASS | mesmo comando acima | `f9-unitarios-contrato.txt` |
 | Integração (MySQL) | 12 casos (IT-01 a IT-10, com IT-08 e IT-10 em dois casos) | 12 PASS | `backend/tests/run-integration.sh` | `f9-integracao.txt` |
-| Manuais | 14 (MT-01 a MT-14) | 14 PASS | roteiro manual (abaixo) | `mt-XX-*` |
-| Unitários (aplicativo Android) | 30 | 30 PASS | `./gradlew testDebugUnitTest` | saída do Gradle (`mobile/`) |
+| Manuais | 18 (MT-01 a MT-18) | 18 PASS | roteiro manual (abaixo) | `mt-XX-*`, `ux-*` |
+| Unitários (aplicativo Android) | 50 | 50 PASS | `./gradlew testDebugUnitTest` | saída do Gradle (`mobile/`) |
 
-**Resultado geral: 76 de 76 casos aprovados, sem falhas.**
+**Resultado geral: 100 de 100 casos aprovados, sem falhas** (12 + 8 + 12 + 18 + 50).
 
 ## Testes manuais (MT)
 
@@ -32,11 +32,17 @@ Execução consolidada da F9 (11/11/2026), com banco limpo recriado a partir de 
 | MT-12 | Medicamento no BNAFAR | API e app | PASS | `mt-12-medicamento-bnafar.txt`, `mt-12-app-medicamento.png` |
 | MT-13 | App sem conexão e sincronização da fila | app (API parada e depois restaurada) | PASS | `mt-13-app-offline.png`, `mt-13-app-sincronizado.png` |
 | MT-14 | Auditoria por perfil | API | PASS | `mt-14-auditoria-perfil.txt` |
+| MT-15 | Botão "Início" volta à tela inicial a partir de Saúde, Consultar e Atendimento; Voltar do sistema volta ao Início | app (emulador) | PASS | `ux-resumo.md`, `ux-inicio.png` |
+| MT-16 | Anexar documento pelo seletor do Android; o documento continua na lista depois de reiniciar o app e abre no visualizador | app (emulador) | PASS | `ux-documentos.png` |
+| MT-17 | Documento cujo arquivo foi apagado: aviso na lista e sem queda do app ao compartilhar | app (emulador) | PASS | `ux-documentos-arquivo-ausente.png` |
+| MT-18 | Compartilhamento só depois de o atendente validar o código (terminal responde `AUTORIZADO`); sem validação o botão não aparece | app e terminal | PASS | `ux-compartilhar-liberado.png`, `ux-compartilhar-android.png` |
 
 ## Problemas encontrados durante o projeto
 
 | Fase | Problema | Correção |
 |---|---|---|
+| F10 | O app fechava ao compartilhar um documento cujo arquivo o Android não permitia mais ler (`SecurityException`) | O app confere cada arquivo antes, ignora os ilegíveis e avisa o usuário (MT-17) |
+| F10 | A aba "Início" não voltava à tela inicial | Navegação interna com Início como destino inicial (MT-15) |
 | F3 | O prontuário (E4) não mostrava documentos, diferente do SDD | Teste de integração IT-07 verificou pelo handshake (E3) |
 | F4 | `AuthService` dependia do banco e impedia testes unitários | Refatorado; cadastro com um único `SaveChanges` |
 | F5 | Teste rodou sobre build antigo e falhou por engano | Recompilação; resultado revalidado |

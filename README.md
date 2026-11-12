@@ -105,12 +105,24 @@ iot/.venv/bin/python iot/tensiometro.py --cenario demo
 
 ## Declaração de uso de IA
 
-*Em preparação. Será preenchida com as ferramentas usadas e para quê, após confirmação do grupo.*
+O grupo usou ferramentas de inteligência artificial como apoio, e todas as decisões, a execução e a validação foram feitas e revisadas por pessoas do grupo.
+
+| Ferramenta | Para que foi usada |
+|---|---|
+| **Gemini** | Montar e revisar o documento de design (SDD): requisitos, modelo de dados e plano de fases |
+| **Claude (Claude Code)** | Montar o esqueleto do projeto e escrever, a partir do SDD, o código do banco, da API, do aplicativo e dos sensores, os testes, os scripts e a documentação |
+
+Como o grupo conduziu e validou o trabalho:
+- O grupo definiu o tema, as decisões de escopo (por exemplo, TOTP, municípios, tecnologias do curso) e aprovou cada plano de fase antes da execução.
+- Os testes (unitários, de contrato, de integração e manuais) foram executados em ambiente real: banco no Docker, API local e aplicativo no emulador Android. Os resultados estão em `docs/evidencia-testes/`.
+- As decisões que mudaram ao longo do projeto estão em `docs/adr/`.
+
+*Texto sujeito à confirmação final do grupo e à regra da disciplina sobre uso de IA.*
 
 ## Vídeo pitch
 
-*Em preparação. O link público será incluído aqui e no arquivo `.txt` de entrega.*
+*Link público: **[PENDENTE]**. O roteiro e o checklist de gravação estão em [docs/roteiro-pitch.md](docs/roteiro-pitch.md). O link entra aqui e no arquivo `.txt` de entrega.*
 
 ## Resultados dos testes
 
-Consolidados em [docs/evidencia-testes/RELATORIO.md](docs/evidencia-testes/RELATORIO.md): 76 casos aprovados (12 unitários, 8 de contrato, 12 de integração, 14 manuais e 30 do aplicativo).
+Consolidados em [docs/evidencia-testes/RELATORIO.md](docs/evidencia-testes/RELATORIO.md): 100 casos aprovados (12 unitários, 8 de contrato, 12 de integração, 18 manuais e 50 do aplicativo).
