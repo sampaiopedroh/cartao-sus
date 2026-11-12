@@ -15,7 +15,7 @@ public class ApiKeyAuthHandler(
     IDispositivoRepository dispositivos)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
-    public const string Scheme = "ApiKey";
+    public new const string Scheme = "ApiKey";
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {

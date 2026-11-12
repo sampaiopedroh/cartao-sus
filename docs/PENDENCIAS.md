@@ -9,6 +9,9 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 - README final com a ordem completa de execução, verificada com um clone limpo do repositório.
 - Documentação de decisões (ADR) em `docs/`.
 - Revisão de UX do app (abas Início, Atendimento, Consultar e Saúde, fontes maiores, botão Início corrigido), tela **Meus documentos** e compartilhamento de documentos depois da validação do código.
+- Coleção do Postman reescrita como fluxo executável (26 requisições, 39 testes) e executada no Newman sem falhas, duas vezes seguidas (`docs/evidencia-testes/f10-newman.txt`).
+- Vulnerabilidades de dependências corrigidas (`MySqlConnector` 2.6.2 e `Pkcs` 10.0.15), build sem avisos e testes verdes.
+- Compartilhamento testado também com PDF e imagem juntos (`ux-compartilhar-pdf-e-imagem.png`).
 - Teste de clone limpo feito em 11/11/2026 (banco, API, testes, sensores e app), em `docs/evidencia-testes/f10-clone-limpo.txt`.
 - Declaração de uso de IA escrita no `README.md` (falta a confirmação do grupo).
 - PDF com as seis partes (`docs/entrega/GateMinds-Cartao-SUS-Entrega.pdf`, 20 páginas), roteiro do vídeo (`docs/roteiro-pitch.md`) e checklist do edital (`docs/entrega/checklist-edital.md`).
@@ -32,11 +35,9 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 ## Pendências técnicas (não impedem a entrega)
 
 - **Histórico do git com um único autor.** O edital valoriza commits de todos os integrantes. Cada pessoa do grupo deve fazer commits com o próprio nome, se possível.
-- **Coleção do Postman não testada com o Newman.** A coleção tem testes de status, mas a validação foi só de estrutura.
-- **Teste do aplicativo só no emulador.** Não houve teste em aparelho físico, nem com PDF no compartilhamento (foi testado com imagem).
+- **Teste do aplicativo só no emulador.** Não houve teste em aparelho físico (o compartilhamento já foi testado no emulador com imagem e PDF).
 - **Compartilhamento sem NFC real.** O botão de compartilhar aparece quando surge um atendimento autorizado novo no histórico da conta; outro aparelho com a mesma conta também libera. Ver o ADR do NFC.
 - **Teste de clone limpo no Android** exige o `mobile/local.properties` com o caminho do SDK (já descrito no README).
-- **Avisos de vulnerabilidade** em `MySqlConnector` e `System.Security.Cryptography.Pkcs`, sem correção publicada nas versões usadas. Registrado no `backend/README.md`.
 - **Estoque do BNAFAR** pode mudar com o tempo. Se algum medicamento do catálogo ficar sem estoque, a demonstração mostra a lista vazia.
 
 ## Decisões já tomadas que o professor pode questionar

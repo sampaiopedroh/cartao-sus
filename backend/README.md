@@ -129,8 +129,8 @@ O script confere se o MySQL está `healthy`, carrega o `.env` e roda os testes c
 
 Para rodar só os unitários e de contrato, sem banco: `dotnet test CartaoSus.slnx --filter "Category!=Integracao"`.
 
-Evidência em `docs/evidencia-testes/f5-resumo.md`. A coleção do Postman está em `docs/postman-collection.json` (exportada do Swagger).
+Evidência em `docs/evidencia-testes/f5-resumo.md`. A coleção do Postman está em `docs/postman-collection.json` (gerada por `docs/postman/gerar_colecao.py`): 26 requisições em ordem, com 39 testes. Para rodar com o Newman, defina `senhaDemo`, `segredoTotpMaria`, `chaveTerminalUbs` e `chaveTensiometro`: `npx newman run docs/postman-collection.json --env-var senhaDemo=... --env-var segredoTotpMaria=... --env-var chaveTerminalUbs=... --env-var chaveTensiometro=...`. Evidência em `docs/evidencia-testes/f10-newman.txt`.
 
 ## Observação sobre dependências
 
-O `dotnet list package --vulnerable` aponta avisos para `MySqlConnector` e `System.Security.Cryptography.Pkcs`, puxados pelo Pomelo e pelo JWT Bearer. As versões corrigidas ainda não estão publicadas nos pacotes usados, então o risco foi aceito e registrado. Revisar quando houver atualização.
+Em 11/11/2026 o `dotnet list package --vulnerable` apontava `MySqlConnector` 2.5.0 (moderada) e `System.Security.Cryptography.Pkcs` 10.0.9 (alta). Os dois foram atualizados para versões corrigidas (2.6.2 e 10.0.15) e o comando já não mostra alertas. O `MySqlConnector` 2.6.2 é mais novo que o esperado pelo Pomelo 9.0.0; os testes unitários, de contrato e de integração passam. Também foram removidos o pacote `Microsoft.Extensions.Identity.Core` (já vem no framework) e o aviso de membro escondido em `ApiKeyAuthHandler`, e o build ficou sem avisos.

@@ -11,6 +11,6 @@
 | F8 | `f8-resumo.md`, `f8_*.png` | Telas do cidadão e fila offline no emulador |
 | F9 | `RELATORIO.md`, `mt-*`, `f9-*.txt` | Relatório consolidado: 76 casos aprovados |
 
-Coleção do Postman e Swagger: `../postman-collection.json` e `../swagger.json`.
+Coleção do Postman e Swagger: `../postman-collection.json` e `../swagger.json`. Execução da coleção no Newman: `f10-newman.txt`. Teste de clone limpo: `f10-clone-limpo.txt`. Testes do Android: `f10-android-testes.txt`.
 
 Arquivos `mt-*.txt` e `mt-*.png` são os casos manuais MT-01 a MT-14. O roteiro e o resultado de cada um estão em `RELATORIO.md`.

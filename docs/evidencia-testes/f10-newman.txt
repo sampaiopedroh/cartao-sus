@@ -1,0 +1,153 @@
+Coleção Postman executada com o Newman 6.2.1 (11/11/2026), API local, banco com a carga de demonstração.
+Comando: newman run docs/postman-collection.json --env-var senhaDemo=... --env-var segredoTotpMaria=... --env-var chaveTerminalUbs=... --env-var chaveTensiometro=... (valores omitidos)
+
+newman
+
+Cartão SUS Inteligente API
+
+Folder 1. Autenticação
+Sub-folder Login da Maria (cidadã)
+  POST http://localhost:8080/api/v1/auth/login [200 OK, 639B, 50ms]
+  Pass  status 200
+  Pass  perfil CIDADAO
+
+Sub-folder Login do João (cidadão)
+  POST http://localhost:8080/api/v1/auth/login [200 OK, 649B, 39ms]
+  Pass  status 200
+
+Sub-folder Login do administrador
+  POST http://localhost:8080/api/v1/auth/login [200 OK, 617B, 37ms]
+  Pass  status 200
+  Pass  perfil ADMIN
+
+Sub-folder Login com senha errada (401)
+  POST http://localhost:8080/api/v1/auth/login [401 Unauthorized, 297B, 34ms]
+  Pass  status 401
+  Pass  erro NAO_AUTORIZADO
+
+Sub-folder Login sem o campo senha (400)
+  POST http://localhost:8080/api/v1/auth/login [400 Bad Request, 332B, 1ms]
+  Pass  status 400
+  Pass  erro VALIDACAO
+
+Sub-folder Quem sou eu (me)
+  GET http://localhost:8080/api/v1/auth/me [200 OK, 233B, 1ms]
+  Pass  status 200
+  Pass  login da Maria
+
+Sub-folder Cadastro de novo cidadão
+  POST http://localhost:8080/api/v1/auth/cadastro [201 Created, 299B, 43ms]
+  Pass  status 201
+  Pass  segredo TOTP devolvido uma única vez
+
+Sub-folder Cadastro repetido (409)
+  POST http://localhost:8080/api/v1/auth/cadastro [409 Conflict, 308B, 3ms]
+  Pass  status 409
+  Pass  erro CONFLITO
+
+Folder 2. Cidadão (token da Maria)
+Sub-folder Prontuário
+  GET http://localhost:8080/api/v1/cidadao/1/prontuario [200 OK, 588B, 5ms]
+  Pass  status 200
+
+Sub-folder Prontuário de outro cidadão (403)
+  GET http://localhost:8080/api/v1/cidadao/2/prontuario [403 Forbidden, 312B, 3ms]
+  Pass  status 403
+  Pass  erro SEM_PERMISSAO
+
+Sub-folder Sinais vitais
+  GET http://localhost:8080/api/v1/cidadao/1/sinais-vitais [200 OK, 500B, 4ms]
+  Pass  status 200
+
+Sub-folder Atualizar histórico clínico
+  PUT http://localhost:8080/api/v1/cidadao/1/historico/1 [200 OK, 280B, 2ms]
+  Pass  status 200
+
+Sub-folder Alertas da Maria
+  GET http://localhost:8080/api/v1/cidadao/1/alertas [200 OK, 199B, 5ms]
+  Pass  status 200
+
+Sub-folder Histórico de acessos
+  GET http://localhost:8080/api/v1/cidadao/1/acessos [200 OK, 845B, 2ms]
+  Pass  status 200
+
+Folder 3. Documentos (Maria)
+Sub-folder Registrar documento
+  POST http://localhost:8080/api/v1/documentos [201 Created, 217B, 9ms]
+  Pass  status 201
+
+Sub-folder Excluir documento
+  DELETE http://localhost:8080/api/v1/documentos/8 [204 No Content, 81B, 7ms]
+  Pass  status 204
+
+Folder 4. Dados do SUS e unidades
+Sub-folder Unidades de saúde
+  GET http://localhost:8080/api/v1/unidades [200 OK, 2.72kB, 3ms]
+  Pass  status 200
+
+Sub-folder Catálogo de medicamentos
+  GET http://localhost:8080/api/v1/sus/medicamentos/catalogo [200 OK, 1.4kB, 1ms]
+  Pass  status 200
+  Pass  catálogo com itens
+
+Sub-folder Estoque do medicamento em São Paulo
+  GET http://localhost:8080/api/v1/sus/medicamentos?municipio=355030&catmat=BR0276234-2 [200 OK, 1.21kB, 372ms]
+  Pass  status 200
+
+Sub-folder Equipamentos da unidade (CNES)
+  GET http://localhost:8080/api/v1/sus/equipamentos/9186492 [200 OK, 6.81kB, 170ms]
+  Pass  status 200
+
+Folder 5. Dispositivos IoT (X-API-KEY) e alertas
+Sub-folder Tensiômetro: pressão crítica
+  POST http://localhost:8080/api/v1/telemetria/sinais-vitais [201 Created, 296B, 18ms]
+  Pass  status 201
+  Pass  alerta disparado
+
+Sub-folder Alertas pendentes do João
+  GET http://localhost:8080/api/v1/cidadao/2/alertas?status=PENDENTE [200 OK, 939B, 7ms]
+  Pass  status 200
+  Pass  há alerta pendente
+
+Sub-folder Confirmar entrega do alerta
+  PUT http://localhost:8080/api/v1/cidadao/2/alertas/3 [204 No Content, 81B, 8ms]
+  Pass  status 204
+
+Sub-folder Terminal NFC: código TOTP válido
+  -
+  | `Using "CryptoJS" is deprecated. Use "require('crypto-
+  | js')" instead.`
+  -
+  POST http://localhost:8080/api/v1/acolhimento/validar-nfc [200 OK, 571B, 16ms]
+  Pass  status 200
+  Pass  AUTORIZADO
+
+Folder 6. Administração
+Sub-folder Auditoria como administrador
+  GET http://localhost:8080/api/v1/admin/auditoria [200 OK, 2.5kB, 5ms]
+  Pass  status 200
+
+Sub-folder Auditoria como cidadã (403)
+  GET http://localhost:8080/api/v1/admin/auditoria [403 Forbidden, 310B, 1ms]
+  Pass  status 403
+  Pass  erro SEM_PERMISSAO
+
+------------------------------------------------------------------
+|                         |          executed |           failed |
+--------------------------+-------------------+-------------------
+|              iterations |                 1 |                0 |
+--------------------------+-------------------+-------------------
+|                requests |                26 |                0 |
+--------------------------+-------------------+-------------------
+|            test-scripts |                26 |                0 |
+--------------------------+-------------------+-------------------
+|      prerequest-scripts |                 2 |                0 |
+--------------------------+-------------------+-------------------
+|              assertions |                39 |                0 |
+------------------------------------------------------------------
+| total run duration: 1149ms                                     |
+------------------------------------------------------------------
+| total data received: 19.46kB (approx)                          |
+------------------------------------------------------------------
+| average response time: 32ms [min: 1ms, max: 372ms, s.d.: 75ms] |
+------------------------------------------------------------------

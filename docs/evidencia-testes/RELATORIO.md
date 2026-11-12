@@ -41,6 +41,8 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 
 | Fase | Problema | Correção |
 |---|---|---|
+| F10 | Avisos de vulnerabilidade em `MySqlConnector` 2.5.0 (moderada) e `System.Security.Cryptography.Pkcs` 10.0.9 (alta) | Atualizados para 2.6.2 e 10.0.15; `dotnet list package --vulnerable` sem alertas e testes verdes |
+| F10 | A coleção do Postman era só a exportação do Swagger e não rodava de ponta a ponta (sem token, sem chave de dispositivo e sem variáveis de caminho) | Coleção reescrita em ordem, com 26 requisições e 39 testes; executada no Newman sem falhas (`f10-newman.txt`) |
 | F10 | O app fechava ao compartilhar um documento cujo arquivo o Android não permitia mais ler (`SecurityException`) | O app confere cada arquivo antes, ignora os ilegíveis e avisa o usuário (MT-17) |
 | F10 | A aba "Início" não voltava à tela inicial | Navegação interna com Início como destino inicial (MT-15) |
 | F3 | O prontuário (E4) não mostrava documentos, diferente do SDD | Teste de integração IT-07 verificou pelo handshake (E3) |
@@ -62,7 +64,6 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 - A consulta de remédio usa o estoque de São Paulo; a API do BNAFAR não informa total de registros, então o `totalElements` é aproximado.
 - Cada pressão gera um alerta por leitura: sístole e diástole acima do limiar geram dois alertas.
 - As consultas Q2 e Q7 usam `NOW()` do banco, que está em UTC; a janela pode deslocar 3 horas em relação à hora local.
-- Avisos de vulnerabilidade em `MySqlConnector` e `System.Security.Cryptography.Pkcs` (sem correção publicada nas versões usadas).
 - Testes manuais MT-05, MT-07, MT-08, MT-12 e MT-13 foram executados com o emulador Android; a versão física não foi testada.
 
 ## Segurança das evidências
