@@ -59,6 +59,7 @@ Os testes são unitários (JUnit 4): validação de formulário, mapeamento de e
 
 ## Segurança
 
+- **NFC:** a ideia é usar NFC para compartilhar as informações, mas, por limitações da simulação (sem leitor físico nem HCE no emulador), o app compartilha pelo seletor do Android depois que o atendente valida o código. Detalhes em `../docs/adr/ADR-nfc-compartilhamento.md`.
 - A sessão (token e nome) fica em `SharedPreferences` privado ao app. **Não é criptografada** (limitação registrada no SDD 7.4).
 - HTTP em texto claro só é permitido para `10.0.2.2` e `localhost` (`network_security_config.xml`).
 - Nenhuma chave ou segredo fica no código.

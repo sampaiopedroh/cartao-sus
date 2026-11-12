@@ -20,5 +20,6 @@ Este projeto registra as decisões de arquitetura e de implementação em três 
 | TOTP com anti-reuso em memória | Plano F3 | Suficiente para uma instância; limitação registrada |
 | Testes de contrato por snapshot, sem Pact | Plano F4 | Pact não é coberto pelo curso |
 | Fila offline com Room | Plano F8 | SDD pede; Room é coberto pelo curso |
+| Compartilhar documentos pelo seletor do Android, e não por NFC | Sessão de UX (F10) | A ideia é NFC, mas a simulação não tem leitor nem HCE; ver `ADR-nfc-compartilhamento.md` |
 
 Dados de APIs do SUS conferidos no Swagger oficial: `apis-publicas.md` estava com caminhos errados (ver v3, seção 0.1).

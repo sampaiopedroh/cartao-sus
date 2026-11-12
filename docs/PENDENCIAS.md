@@ -37,6 +37,7 @@ Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h
 - **TOTP:** o professor confirmou que pode ser usado.
 - **"Em SP":** a seleção de unidades e medicamentos usa o município de São Paulo, não o estado.
 - **Stack:** ASP.NET Core em vez de Spring, por estar no conteúdo do curso.
+- **NFC:** a ideia é compartilhar as informações por NFC, mas, por limitações da simulação, o compartilhamento de documentos usa o seletor do Android depois da validação do código (`docs/adr/ADR-nfc-compartilhamento.md`). NFC real (HCE) fica como trabalho futuro.
 - **Segredo TOTP no aparelho:** guardado sem criptografia, com a limitação registrada no SDD.
 
 ## Arquivos de entrega

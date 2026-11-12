@@ -101,6 +101,7 @@ iot/.venv/bin/python iot/tensiometro.py --cenario demo
 - Nenhum segredo é versionado: senhas, chaves e segredos ficam no `.env` e nos arquivos gerados, todos no `.gitignore`.
 - O `.env.example` traz apenas os nomes das variáveis.
 - O segredo TOTP no aparelho fica sem criptografia; a limitação está registrada no SDD (seção 7.4).
+- Compartilhamento de documentos sem NFC real: a ideia é compartilhar as informações por NFC, mas, pelas limitações da simulação (sem leitor NFC físico nem HCE no emulador), o grupo optou por liberar o compartilhamento pelo seletor do Android depois que o atendente valida o código (ver `docs/adr/ADR-nfc-compartilhamento.md`).
 
 ## Declaração de uso de IA
 

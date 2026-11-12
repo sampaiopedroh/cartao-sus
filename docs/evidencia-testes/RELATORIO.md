@@ -50,6 +50,7 @@ Execução consolidada da F9 (11/11/2026), com banco limpo recriado a partir de 
 
 ## Limitações conhecidas
 
+- Compartilhamento de documentos sem NFC real: a ideia é compartilhar as informações por NFC, mas, pelas limitações da simulação (sem leitor NFC físico nem HCE no emulador), o grupo optou por liberar o compartilhamento pelo seletor do Android depois que o atendente valida o código (ver `docs/adr/ADR-nfc-compartilhamento.md`).
 - O segredo TOTP fica no SharedPreferences do aplicativo, sem criptografia (SDD 7.4).
 - O anti-reuso do TOTP é em memória: vale para uma única instância da API.
 - A consulta de remédio usa o estoque de São Paulo; a API do BNAFAR não informa total de registros, então o `totalElements` é aproximado.

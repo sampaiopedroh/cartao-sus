@@ -95,6 +95,8 @@ Variáveis: `API_URL` (padrão `http://localhost:8080`), `IOT_KEY_TERMINAL_UBS`,
 
 ## Teste: código de atendimento e compartilhamento de documentos
 
+> A ideia é usar NFC para compartilhar as informações. Por limitações da simulação (sem leitor NFC físico nem HCE no emulador), o compartilhamento dos documentos usa o seletor do Android, liberado depois que o atendente valida o código. Ver `docs/adr/ADR-nfc-compartilhamento.md`.
+
 1. App no emulador, conta da Maria, aba **Atendimento** aberta e com o código secreto salvo.
 2. No terminal (com a API no ar):
 
