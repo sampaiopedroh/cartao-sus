@@ -490,7 +490,7 @@ Execução consolidada da F9 (11/11/2026), atualizada na F10 com a revisão de U
 | MT-15 | Botão "Início" volta à tela inicial a partir de Saúde, Consultar e Atendimento; Voltar do sistema volta ao Início | app (emulador) | PASS | `ux-resumo.md`, `ux-inicio.png` |
 | MT-16 | Anexar documento pelo seletor do Android; o documento continua na lista depois de reiniciar o app e abre no visualizador | app (emulador) | PASS | `ux-documentos.png` |
 | MT-17 | Documento cujo arquivo foi apagado: aviso na lista e sem queda do app ao compartilhar | app (emulador) | PASS | `ux-documentos-arquivo-ausente.png` |
-| MT-19 | Acessibilidade: descrições para o leitor de tela na árvore de acessibilidade e layout com a fonte do sistema em 200% | app (emulador) | PASS | `a11y-fonte-200-inicio.png`, `a11y-fonte-200-atendimento.png`, `../acessibilidade.md` |
+| MT-19 | Acessibilidade: descrições para o leitor de tela na árvore de acessibilidade e layout com a fonte do sistema em 200% | app (emulador) | PASS | `a11y-arvore-acessibilidade.md`, `a11y-contraste.md`, `a11y-fonte-200-*.png`, `a11y-talkback-foco-titulo.png`, `a11y-como-chegar-sem-mapas.png`, `../acessibilidade.md` |
 | MT-18 | Compartilhamento só depois de o atendente validar o código (terminal responde `AUTORIZADO`); sem validação o botão não aparece | app e terminal | PASS | `ux-compartilhar-liberado.png`, `ux-compartilhar-android.png` |
 
 ### Problemas encontrados durante o projeto
