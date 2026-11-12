@@ -42,17 +42,17 @@ O objetivo é que o app funcione para quem **não enxerga** (usa o leitor de tel
 
 ### Correção encontrada na revisão
 
-- O botão "Como chegar" fechava o app em aparelhos sem aplicativo de mapas. Agora mostra "Nenhum aplicativo de mapas instalado."
+- O botão "Como chegar" fechava o app em aparelhos sem aplicativo de mapas. Agora mostra "Nenhum aplicativo de mapas instalado." Testado com o Maps desativado no emulador (`evidencia-testes/a11y-como-chegar-sem-mapas.png`); o Maps foi reativado depois.
 
 ## Como foi verificado
 
 | Verificação | Resultado |
 |---|---|
 | Testes automáticos dos textos falados (`FalaTest`, 7 testes) | Passam |
-| Testes automáticos de contraste nos temas claro e escuro (`ContrasteTest`, 2 testes) | Passam |
-| Árvore de acessibilidade lida no emulador (`uiautomator`) | Descrições presentes (ex.: cartão "Cartão SUS de Maria Souza Lima. Número do cartão: 8 9 8, 0 0 0 0, ...") |
-| Fonte do sistema em 200% no emulador | Atalhos, botões, barra inferior e título sem corte (capturas `a11y-fonte-200-*.png`) |
-| TalkBack ligado no emulador | Liga e foca o título da tela ao abrir. **Limitação:** os gestos do TalkBack (deslizar para o próximo item) não podem ser simulados por linha de comando, então a navegação item a item não foi automatizada |
+| Testes automáticos de contraste nos temas claro e escuro (`ContrasteTest`, 2 testes) | Passam. Valores de cada par em `evidencia-testes/a11y-contraste.md` (menor valor: 4,54:1, aviso de sucesso no tema escuro) |
+| Árvore de acessibilidade lida no emulador (`uiautomator`) | Descrições presentes em todas as telas, salvas em `evidencia-testes/a11y-arvore-acessibilidade.md` (ex.: cartão "Cartão SUS de Maria Souza Lima. Número do cartão: 8 9 8, 0 0 0 0, ..."; caixas de seleção "marcada"/"não marcada") |
+| Fonte do sistema em 200% no emulador | Atalhos, botões, barra inferior e título sem corte. Capturas: `a11y-fonte-200-inicio.png`, `-atendimento.png`, `-saude.png`, `-unidades.png`, `-documentos.png` |
+| TalkBack ligado no emulador | Liga e foca o título da tela ao abrir (`a11y-talkback-foco-titulo.png`). **Limitação:** os gestos do TalkBack (deslizar para o próximo item) não podem ser simulados por linha de comando, então a navegação item a item não foi automatizada |
 
 ## Como testar com o TalkBack (recomendado antes da entrega)
 

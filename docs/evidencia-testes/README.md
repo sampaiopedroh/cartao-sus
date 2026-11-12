@@ -14,3 +14,14 @@
 Coleção do Postman e Swagger: `../postman-collection.json` e `../swagger.json`. Execução da coleção no Newman: `f10-newman.txt`. Teste de clone limpo: `f10-clone-limpo.txt`. Testes do Android: `f10-android-testes.txt`.
 
 Arquivos `mt-*.txt` e `mt-*.png` são os casos manuais MT-01 a MT-14. O roteiro e o resultado de cada um estão em `RELATORIO.md`.
+
+## Acessibilidade (F10)
+
+| Arquivo | O que mostra |
+|---|---|
+| `a11y-arvore-acessibilidade.md` | O que o leitor de tela recebe em cada tela (textos e descrições faladas) |
+| `a11y-contraste.md` | Contraste de cada par de cores, temas claro e escuro (WCAG 2.1) |
+| `a11y-fonte-200-*.png` | Início, Atendimento, Saúde, Unidades e Documentos com a fonte do sistema em 200% |
+| `a11y-talkback-foco-titulo.png` | TalkBack ligado, com o foco no título da tela |
+| `a11y-como-chegar-sem-mapas.png` | "Como chegar" sem aplicativo de mapas: aviso em vez de fechar o app |
+| `f10-android-testes.txt` | Inclui `FalaTest` (textos falados) e `ContrasteTest` |
