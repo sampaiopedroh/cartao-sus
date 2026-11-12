@@ -6,10 +6,10 @@ App do cidadão em Kotlin, Jetpack Compose (Material 3), MVVM, Retrofit com Gson
 
 | Aba | O que faz |
 |---|---|
-| Início (Dashboard) | Cartão digital, alertas com confirmação de entrega |
-| Token | Código TOTP de 6 dígitos com contagem regressiva. Se o segredo não estiver salvo, use "Informar segredo" (o segredo impresso no console da API ao cadastrar) |
-| Consulta | Busca de remédio com estoque em São Paulo, unidades por distância, equipamentos e "Ver no mapa" |
-| Sinais | Registro de medição, gráfico, alerta crítico e fila offline |
+| Início | Cartão digital, alertas com confirmação de entrega |
+| Atendimento | Código TOTP de 6 dígitos com contagem regressiva. Se o segredo não estiver salvo, use "Informar código secreto" (o segredo impresso no console da API ao cadastrar) |
+| Consultar | Busca de remédio com estoque em São Paulo, unidades por distância, equipamentos e "Ver no mapa" |
+| Saúde | Registro de medição, gráfico, alerta crítico e fila offline |
 
 No cadastro, o botão "Salvar neste aparelho" guarda o segredo para o código TOTP funcionar sem digitação.
 
