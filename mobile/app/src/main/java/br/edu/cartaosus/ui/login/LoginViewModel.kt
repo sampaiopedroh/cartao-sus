@@ -21,11 +21,23 @@ class LoginViewModel(private val repositorio: AuthRepository) : ViewModel() {
     val acao: StateFlow<Acao<LoginResponse>> = _acao.asStateFlow()
 
     // Os campos ficam no ViewModel: sobrevivem à rotação da tela.
-    fun alterarLogin(valor: String) = _form.update { it.copy(login = valor) }
-    fun alterarSenha(valor: String) = _form.update { it.copy(senha = valor) }
+    // Ao editar, some a mensagem de erro anterior.
+    fun alterarLogin(valor: String) { limparErro(); _form.update { it.copy(login = valor) } }
+    fun alterarSenha(valor: String) { limparErro(); _form.update { it.copy(senha = valor) } }
+
+    private fun limparErro() {
+        if (_acao.value is Acao.Erro) _acao.value = Acao.Ociosa
+    }
 
     fun entrar() {
         if (_acao.value is Acao.Carregando) return
+        val f0 = _form.value
+        // Validação antes de chamar a rede: mensagem clara e imediata.
+        val problema = br.edu.cartaosus.domain.Validacao.email(f0.login) ?: if (f0.senha.isEmpty()) "Informe a senha." else null
+        if (problema != null) {
+            _acao.value = Acao.Erro(problema)
+            return
+        }
         _acao.value = Acao.Carregando
         viewModelScope.launch {
             val f = _form.value

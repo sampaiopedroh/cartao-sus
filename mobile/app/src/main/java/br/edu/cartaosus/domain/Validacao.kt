@@ -41,4 +41,14 @@ object Validacao {
     } catch (_: DateTimeParseException) {
         "Use o formato AAAA-MM-DD."
     }
+
+    // Data digitada como 8 dígitos (DDMMAAAA). Devolve o erro ou null.
+    fun nascimentoDigitos(digitos: String, hoje: LocalDate = LocalDate.now()): String? {
+        if (digitos.length != 8 || !digitos.all { it.isDigit() }) return "Digite a data com 8 números: dia, mês e ano."
+        return nascimento(paraIso(digitos), hoje)
+    }
+
+    // DDMMAAAA -> AAAA-MM-DD (formato da API).
+    fun paraIso(digitos: String): String =
+        "${digitos.substring(4, 8)}-${digitos.substring(2, 4)}-${digitos.substring(0, 2)}"
 }

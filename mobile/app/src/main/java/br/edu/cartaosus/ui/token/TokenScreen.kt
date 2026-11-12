@@ -4,6 +4,29 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import br.edu.cartaosus.ui.comum.BotaoPrincipal
+import br.edu.cartaosus.ui.comum.BotaoSecundario
+import br.edu.cartaosus.ui.comum.CampoTexto
+import br.edu.cartaosus.ui.comum.CartaoSecao
+import br.edu.cartaosus.ui.dashboard.dataAmigavel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Button
@@ -79,6 +102,7 @@ fun TokenScreen(viewModel: TokenViewModel) {
     var informando by remember { mutableStateOf(false) }
     var texto by remember { mutableStateOf("") }
     var invalido by remember { mutableStateOf(false) }
+    var copiado by remember { mutableStateOf(false) }
 
     // Atualiza o código a cada 250 ms: ao virar o passo de 30 s, o código muda sem recarregar a tela.
     LaunchedEffect(Unit) {
@@ -88,34 +112,73 @@ fun TokenScreen(viewModel: TokenViewModel) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Token de atendimento", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-        Text("Mostre este código ao atendente. Ele vale por 30 segundos.", style = MaterialTheme.typography.bodyMedium)
+    Column(
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            "Mostre este código ao atendente no balcão. Seus dados só aparecem para ele com o seu código.",
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
         val s = segredo
         if (s == null) {
-            Text("Este aparelho ainda não tem o segredo TOTP desta conta.")
-            Button(onClick = { informando = true }) { Text("Informar segredo") }
+            CartaoSecao {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Filled.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+                    Text("Falta o código secreto", style = MaterialTheme.typography.titleMedium)
+                }
+                Text(
+                    "Este aparelho ainda não tem o código secreto desta conta. Ele aparece uma vez quando você cria a conta.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                BotaoPrincipal("Informar código secreto", { informando = true })
+            }
         } else {
             val codigo = TotpGenerator.codigo(s, agoraMs)
             val restante = TotpGenerator.restanteSegundos(agoraMs)
-            Text(codigo.chunked(3).joinToString(" "), fontSize = 44.sp, fontWeight = FontWeight.Bold)
-            LinearProgressIndicator(progress = { restante / 30f }, modifier = Modifier.fillMaxWidth())
-            Text("Novo código em $restante s", style = MaterialTheme.typography.bodySmall)
-            TextButton(onClick = { area.setText(AnnotatedString(codigo)) }) { Text("Copiar código") }
+            val acabando = restante <= 5
+            val corBarra = if (acabando) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+
+            CartaoSecao(corFundo = MaterialTheme.colorScheme.primaryContainer) {
+                Text("Seu código", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    codigo.chunked(3).joinToString(" "),
+                    fontSize = 56.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.fillMaxWidth().semantics { contentDescription = "Seu código é " + codigo.toList().joinToString(" ") },
+                )
+                LinearProgressIndicator(
+                    progress = { restante / 30f },
+                    color = corBarra,
+                    trackColor = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth().height(12.dp),
+                )
+                Text(
+                    if (acabando) "Vai mudar em $restante segundos" else "Muda em $restante segundos",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = if (acabando) FontWeight.Bold else FontWeight.Normal,
+                )
+            }
+            BotaoSecundario(
+                if (copiado) "Código copiado" else "Copiar código",
+                { area.setText(AnnotatedString(codigo)); copiado = true },
+            )
+            LaunchedEffect(restante) { if (restante == 30) copiado = false }
         }
 
-        Text("Últimos acessos", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Text("Últimos atendimentos", style = MaterialTheme.typography.titleMedium)
         ConteudoEstado(
             estado = acessos,
             vazio = acessos.dados.isNullOrEmpty(),
-            mensagemVazio = "Nenhum acesso registrado.",
+            mensagemVazio = "Nenhum atendimento ainda",
+            textoVazio = "Quando você usar seu código no balcão, o registro aparece aqui.",
             onTentar = viewModel::carregarAcessos,
         ) { lista ->
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                lista.take(10).forEach { a ->
-                    Text("${a.dataHoraAcesso.take(16).replace('T', ' ')} · unidade ${a.idUnidade} · ${a.statusAutenticacao}${a.motivo?.let { " ($it)" } ?: ""}")
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                lista.take(8).forEach { a -> LinhaAcesso(a) }
             }
         }
     }
@@ -123,26 +186,53 @@ fun TokenScreen(viewModel: TokenViewModel) {
     if (informando) {
         AlertDialog(
             onDismissRequest = { informando = false },
-            title = { Text("Segredo TOTP") },
+            title = { Text("Código secreto") },
             text = {
-                Column {
-                    Text("Cole o segredo mostrado no console da API ao cadastrar esta conta.")
-                    OutlinedTextField(
-                        value = texto,
-                        onValueChange = { texto = it; invalido = false },
-                        isError = invalido,
-                        supportingText = { if (invalido) Text("Segredo inválido: use letras A–Z e números 2–7.") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Cole aqui o código secreto que apareceu quando você criou a conta.", style = MaterialTheme.typography.bodyLarge)
+                    CampoTexto(
+                        valor = texto,
+                        aoMudar = { texto = it; invalido = false },
+                        rotulo = "Código secreto",
+                        erro = if (invalido) "Use só letras de A a Z e números de 2 a 7 (mínimo 16)." else null,
+                        acaoIme = ImeAction.Done,
+                        aoConfirmar = { if (viewModel.salvarSegredo(texto)) informando = false else invalido = true },
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    if (viewModel.salvarSegredo(texto)) informando = false else invalido = true
-                }) { Text("Salvar") }
+                TextButton(onClick = { if (viewModel.salvarSegredo(texto)) informando = false else invalido = true }) {
+                    Text("Salvar", style = MaterialTheme.typography.labelLarge)
+                }
             },
-            dismissButton = { TextButton(onClick = { informando = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { informando = false }) { Text("Cancelar", style = MaterialTheme.typography.labelLarge) } },
         )
+    }
+}
+
+@Composable
+private fun LinhaAcesso(a: AcessoResumo) {
+    val ok = a.statusAutenticacao == "AUTORIZADO"
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+    ) {
+        Row(modifier = Modifier.padding(14.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                if (ok) Icons.Filled.CheckCircle else Icons.Filled.Warning,
+                contentDescription = null,
+                tint = if (ok) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(28.dp),
+            )
+            Column {
+                Text(if (ok) "Atendimento autorizado" else "Tentativa recusada", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    "${dataAmigavel(a.dataHoraAcesso)} · unidade ${a.idUnidade}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }

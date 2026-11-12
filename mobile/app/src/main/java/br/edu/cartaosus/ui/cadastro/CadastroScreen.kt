@@ -2,132 +2,163 @@ package br.edu.cartaosus.ui.cadastro
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import br.edu.cartaosus.data.Erros
 import br.edu.cartaosus.ui.Acao
+import br.edu.cartaosus.ui.comum.Aviso
+import br.edu.cartaosus.ui.comum.BotaoPrincipal
+import br.edu.cartaosus.ui.comum.BotaoSecundario
+import br.edu.cartaosus.ui.comum.BotaoTexto
+import br.edu.cartaosus.ui.comum.CampoTexto
+import br.edu.cartaosus.ui.comum.CartaoSecao
+import br.edu.cartaosus.ui.comum.MascaraVisual
+import br.edu.cartaosus.ui.comum.TomAviso
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CadastroScreen(viewModel: CadastroViewModel, onVoltar: () -> Unit) {
     val form by viewModel.form.collectAsState()
     val erros by viewModel.erros.collectAsState()
     val acao by viewModel.acao.collectAsState()
-    val hospedeiro = remember { SnackbarHostState() }
-    val area = LocalClipboardManager.current
+    var senhaVisivel by remember { mutableStateOf(false) }
 
-    LaunchedEffect(acao) {
-        when (val a = acao) {
-            is Acao.Erro -> {
-                val r = hospedeiro.showSnackbar(
-                    message = a.mensagem,
-                    actionLabel = if (a.mensagem == Erros.SEM_CONEXAO) "Tentar de novo" else null,
-                )
-                viewModel.consumirAcao()
-                if (r == SnackbarResult.ActionPerformed) viewModel.cadastrar()
-            }
-            else -> Unit
-        }
-    }
-
-    Scaffold(snackbarHost = { SnackbarHost(hospedeiro) }) { espaco ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Criar conta", style = MaterialTheme.typography.titleLarge) },
+                navigationIcon = {
+                    IconButton(onClick = onVoltar) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar para o login")
+                    }
+                },
+            )
+        },
+    ) { espaco ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(espaco).padding(20.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize().padding(espaco).imePadding()
+                .verticalScroll(rememberScrollState()).padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Text("Criar conta", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-
             val sucesso = acao as? Acao.Sucesso
             if (sucesso != null) {
-                // O segredo TOTP aparece uma única vez (SDD 7.2, tela 2).
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(sucesso.valor.mensagem, style = MaterialTheme.typography.bodyMedium)
-                        Text("Segredo TOTP", fontWeight = FontWeight.Bold)
-                        Text(sucesso.valor.segredoTotp, style = MaterialTheme.typography.bodyLarge)
-                        TextButton(onClick = { area.setText(AnnotatedString(sucesso.valor.segredoTotp)) }) {
-                            Text("Copiar segredo")
-                        }
-                        Text("Guarde este segredo agora. Ele não será exibido de novo.", style = MaterialTheme.typography.bodySmall)
-                        val salvo by viewModel.salvo.collectAsState()
-                        if (salvo) {
-                            Text("Segredo salvo neste aparelho.", fontWeight = FontWeight.Bold)
-                        } else {
-                            Button(onClick = { viewModel.salvarNoAparelho(sucesso.valor) }, modifier = Modifier.fillMaxWidth()) {
-                                Text("Salvar neste aparelho")
-                            }
-                        }
-                        Button(onClick = onVoltar, modifier = Modifier.fillMaxWidth()) { Text("Concluir") }
-                    }
-                }
+                ConcluidoConta(viewModel, sucesso.valor.segredoTotp, sucesso.valor.mensagem, sucesso.valor, onVoltar)
                 return@Column
             }
 
-            val carregando = acao is Acao.Carregando
-            CampoTexto("E-mail", form.login, erros.mapa["login"], { viewModel.alterar("login", it) }, KeyboardType.Email)
-            CampoTexto("Senha (mínimo 8 caracteres)", form.senha, erros.mapa["senha"], { viewModel.alterar("senha", it) }, KeyboardType.Password, senha = true)
-            CampoTexto("CPF (11 dígitos)", form.cpf, erros.mapa["cpf"], { viewModel.alterar("cpf", it) }, KeyboardType.Number)
-            CampoTexto("CNS (15 dígitos)", form.cns, erros.mapa["numeroCns"], { viewModel.alterar("cns", it) }, KeyboardType.Number)
-            CampoTexto("Nome completo", form.nome, erros.mapa["nomeCompleto"], { viewModel.alterar("nome", it) }, KeyboardType.Text)
-            CampoTexto("Nascimento (AAAA-MM-DD)", form.nascimento, erros.mapa["dataNascimento"], { viewModel.alterar("nascimento", it) }, KeyboardType.Number)
+            Text("Preencha seus dados. Leva menos de um minuto.", style = MaterialTheme.typography.bodyLarge)
 
-            Button(
-                onClick = viewModel::cadastrar,
-                enabled = !carregando,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                if (carregando) CircularProgressIndicator(strokeWidth = 2.dp) else Text("Cadastrar")
+            CartaoSecao {
+                Text("Seus dados", style = MaterialTheme.typography.titleMedium)
+                CampoTexto(form.nome, { viewModel.alterar("nome", it) }, "Nome completo", erro = erros.mapa["nomeCompleto"])
+                CampoTexto(
+                    form.nascimento, { viewModel.alterar("nascimento", it) }, "Data de nascimento",
+                    erro = erros.mapa["dataNascimento"], ajuda = "Dia, mês e ano. Exemplo: 15/03/1950",
+                    teclado = KeyboardType.Number, mascara = MascaraVisual(MascaraVisual.DATA),
+                )
+                CampoTexto(
+                    form.cpf, { viewModel.alterar("cpf", it) }, "CPF",
+                    erro = erros.mapa["cpf"], teclado = KeyboardType.Number, mascara = MascaraVisual(MascaraVisual.CPF),
+                )
+                CampoTexto(
+                    form.cns, { viewModel.alterar("cns", it) }, "Número do Cartão SUS (CNS)",
+                    erro = erros.mapa["numeroCns"], ajuda = "São 15 números, impressos no seu Cartão SUS",
+                    teclado = KeyboardType.Number, mascara = MascaraVisual(MascaraVisual.CNS),
+                )
             }
-            TextButton(onClick = onVoltar, modifier = Modifier.fillMaxWidth()) { Text("Já tenho conta") }
+
+            CartaoSecao {
+                Text("Seu acesso", style = MaterialTheme.typography.titleMedium)
+                CampoTexto(form.login, { viewModel.alterar("login", it) }, "E-mail", erro = erros.mapa["login"], teclado = KeyboardType.Email)
+                CampoTexto(
+                    form.senha, { viewModel.alterar("senha", it) }, "Senha",
+                    erro = erros.mapa["senha"], ajuda = "Pelo menos 8 caracteres",
+                    teclado = KeyboardType.Password, acaoIme = ImeAction.Done, aoConfirmar = viewModel::cadastrar,
+                    senha = true, senhaVisivel = senhaVisivel,
+                )
+                BotaoTexto(if (senhaVisivel) "Ocultar senha" else "Mostrar senha", { senhaVisivel = !senhaVisivel })
+            }
+
+            val erroGeral = (acao as? Acao.Erro)?.mensagem
+            if (erroGeral != null) {
+                Aviso(
+                    texto = erroGeral,
+                    tom = TomAviso.ERRO,
+                    acao = if (erroGeral == Erros.SEM_CONEXAO) ({ BotaoTexto("Tentar de novo", viewModel::cadastrar) }) else null,
+                )
+            }
+
+            BotaoPrincipal("Criar conta", viewModel::cadastrar, carregando = acao is Acao.Carregando)
+            BotaoSecundario("Já tenho conta", onVoltar)
         }
     }
 }
 
 @Composable
-private fun CampoTexto(
-    rotulo: String,
-    valor: String,
-    erro: String?,
-    aoMudar: (String) -> Unit,
-    teclado: KeyboardType,
-    senha: Boolean = false,
+private fun ConcluidoConta(
+    viewModel: CadastroViewModel,
+    segredo: String,
+    mensagem: String,
+    resposta: br.edu.cartaosus.data.CadastroResponse,
+    onVoltar: () -> Unit,
 ) {
-    OutlinedTextField(
-        value = valor,
-        onValueChange = aoMudar,
-        label = { Text(rotulo) },
-        isError = erro != null,
-        supportingText = { if (erro != null) Text(erro) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = teclado),
-        visualTransformation = if (senha) PasswordVisualTransformation() else androidx.compose.ui.text.input.VisualTransformation.None,
-        modifier = Modifier.fillMaxWidth(),
-    )
+    val area = LocalClipboardManager.current
+    val salvo by viewModel.salvo.collectAsState()
+
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+        Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(40.dp))
+        Text("Conta criada!", style = MaterialTheme.typography.headlineSmall)
+    }
+    Text(mensagem, style = MaterialTheme.typography.bodyLarge)
+
+    CartaoSecao(corFundo = MaterialTheme.colorScheme.primaryContainer) {
+        Text("Seu código secreto", style = MaterialTheme.typography.titleMedium)
+        Text(
+            segredo.chunked(4).joinToString(" "),
+            style = MaterialTheme.typography.titleLarge,
+            fontFamily = FontFamily.Monospace,
+        )
+        Text(
+            "Ele gera o código que você mostra no atendimento. Aparece só agora, por isso salve neste aparelho.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        BotaoSecundario("Copiar código secreto", { area.setText(AnnotatedString(segredo)) })
+    }
+
+    if (salvo) {
+        Aviso("Código salvo neste aparelho. Você já pode entrar.", TomAviso.SUCESSO)
+    } else {
+        BotaoPrincipal("Salvar neste aparelho", { viewModel.salvarNoAparelho(resposta) })
+    }
+    BotaoSecundario("Ir para o login", onVoltar, modifier = Modifier.fillMaxWidth())
 }

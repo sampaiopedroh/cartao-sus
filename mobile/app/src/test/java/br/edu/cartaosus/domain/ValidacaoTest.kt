@@ -43,3 +43,25 @@ class ValidacaoTest {
     fun nascimentoEmFormatoErradoEhRecusado() =
         assertEquals("Use o formato AAAA-MM-DD.", Validacao.nascimento("11/11/1990", hoje = LocalDate.of(2026, 11, 11)))
 }
+
+class ValidacaoDataBrTest {
+    private val hoje = LocalDate.of(2026, 11, 11)
+
+    @Test
+    fun dataComOitoDigitosValidaEhAceita() = assertNull(Validacao.nascimentoDigitos("15031950", hoje))
+
+    @Test
+    fun dataComMenosDeOitoDigitosPedeOsOitoNumeros() =
+        assertEquals("Digite a data com 8 números: dia, mês e ano.", Validacao.nascimentoDigitos("1503195", hoje))
+
+    @Test
+    fun dataInexistenteEhRecusada() =
+        assertEquals("Use o formato AAAA-MM-DD.", Validacao.nascimentoDigitos("31022000", hoje))
+
+    @Test
+    fun dataFuturaEhRecusada() =
+        assertEquals("A data deve estar no passado.", Validacao.nascimentoDigitos("01012030", hoje))
+
+    @Test
+    fun conversaoParaIsoUsaOFormatoDaApi() = assertEquals("1950-03-15", Validacao.paraIso("15031950"))
+}

@@ -46,13 +46,15 @@ class CadastroViewModel(private val repositorio: AuthRepository, private val ses
     val acao: StateFlow<Acao<CadastroResponse>> = _acao.asStateFlow()
 
     fun alterar(campo: String, valor: String) {
+        val chave = when (campo) { "cns" -> "numeroCns"; "nome" -> "nomeCompleto"; "nascimento" -> "dataNascimento"; else -> campo }
+        if (_erros.value.mapa.containsKey(chave)) _erros.value = ErrosCampos(_erros.value.mapa - chave)
         _form.value = when (campo) {
             "login" -> _form.value.copy(login = valor)
             "senha" -> _form.value.copy(senha = valor)
             "cpf" -> _form.value.copy(cpf = valor.filter { it.isDigit() }.take(11))
             "cns" -> _form.value.copy(cns = valor.filter { it.isDigit() }.take(15))
             "nome" -> _form.value.copy(nome = valor)
-            "nascimento" -> _form.value.copy(nascimento = valor)
+            "nascimento" -> _form.value.copy(nascimento = valor.filter { it.isDigit() }.take(8))
             else -> _form.value
         }
     }
@@ -65,7 +67,7 @@ class CadastroViewModel(private val repositorio: AuthRepository, private val ses
             Validacao.cpf(f.cpf)?.let { "cpf" to it },
             Validacao.cns(f.cns)?.let { "numeroCns" to it },
             Validacao.nome(f.nome)?.let { "nomeCompleto" to it },
-            Validacao.nascimento(f.nascimento)?.let { "dataNascimento" to it },
+            Validacao.nascimentoDigitos(f.nascimento)?.let { "dataNascimento" to it },
         ).toMap()
         _erros.value = ErrosCampos(mapa)
         return mapa
@@ -84,7 +86,7 @@ class CadastroViewModel(private val repositorio: AuthRepository, private val ses
                     cpf = f.cpf,
                     numeroCns = f.cns,
                     nomeCompleto = f.nome.trim(),
-                    dataNascimento = f.nascimento,
+                    dataNascimento = Validacao.paraIso(f.nascimento),
                 )))
             } catch (erro: Exception) {
                 _erros.value = ErrosCampos(Erros.campos(erro).mapKeys { it.key })
