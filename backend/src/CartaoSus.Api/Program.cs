@@ -139,6 +139,16 @@ builder.Services.AddSwaggerGen(c =>
         Name = "X-API-KEY",
         Description = "Chave do dispositivo IoT (terminal NFC ou tensiômetro)"
     });
+    // Sem estes requisitos o botão Authorize do Swagger guarda o token, mas não o envia nas chamadas.
+    // Duas entradas separadas = qualquer um dos dois esquemas serve (token do usuário OU chave do dispositivo).
+    c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", doc)] = []
+    });
+    c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("ApiKey", doc)] = []
+    });
 });
 
 var app = builder.Build();
