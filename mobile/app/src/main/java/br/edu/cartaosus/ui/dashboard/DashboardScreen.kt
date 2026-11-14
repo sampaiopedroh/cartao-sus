@@ -110,7 +110,14 @@ fun DashboardScreen(viewModel: DashboardViewModel, nome: String, onAbrir: (Strin
     var ajuda by remember { mutableStateOf(false) }
 
     // Ao voltar para o Início, atualiza os alertas sem piscar.
-    LaunchedEffect(Unit) { viewModel.carregar(silencioso = true) }
+    // Também confere os avisos a cada poucos segundos, para um alerta novo aparecer sozinho.
+    LaunchedEffect(Unit) {
+        viewModel.carregar(silencioso = true)
+        while (true) {
+            kotlinx.coroutines.delay(5000)
+            viewModel.carregar(silencioso = true)
+        }
+    }
 
     when {
         estado.carregando && estado.dados == null -> EstadoCarregando("Buscando suas informações...")

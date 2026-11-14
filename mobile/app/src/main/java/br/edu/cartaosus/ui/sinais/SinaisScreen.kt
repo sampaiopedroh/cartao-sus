@@ -24,8 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -127,6 +129,20 @@ class SinaisViewModel(private val repositorio: CidadaoRepository) : ViewModel() 
         }
     }
 
+    // Atualização periódica em segundo plano: o gráfico acompanha medições feitas em outro aparelho
+    // (tensiômetro, API) sem o usuário trocar de tela. Se falhar, mantém o que já está na tela.
+    fun atualizarSilencioso() {
+        if (_historico.value.carregando) return
+        viewModelScope.launch {
+            try {
+                val g = _grupo.value
+                val novo = montarHistorico(g)
+                if (g == _grupo.value) _historico.value = Estado(carregando = false, dados = novo)
+            } catch (_: Exception) {
+            }
+        }
+    }
+
     private suspend fun montarHistorico(g: Grupo): Historico = when (g) {
         Grupo.PRESSAO -> {
             val s = repositorio.sinais("PRESSAO_SISTOLICA").medicoes
@@ -218,6 +234,13 @@ fun SinaisScreen(viewModel: SinaisViewModel, onVerUnidades: () -> Unit) {
     val valorA by viewModel.valorA.collectAsState()
     val valorB by viewModel.valorB.collectAsState()
     val salvando by viewModel.salvando.collectAsState()
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(4000)
+            viewModel.atualizarSilencioso()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
