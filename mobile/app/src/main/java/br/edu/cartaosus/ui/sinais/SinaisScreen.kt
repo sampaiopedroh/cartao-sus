@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -148,7 +149,7 @@ class SinaisViewModel(private val repositorio: CidadaoRepository) : ViewModel() 
             val s = repositorio.sinais("PRESSAO_SISTOLICA").medicoes
             val d = repositorio.sinais("PRESSAO_DIASTOLICA").medicoes
             val linhas = s.asReversed().map { m ->
-                val par = d.firstOrNull { it.dataHora == m.dataHora }
+                val par = parDiastolica(m, d)
                 dataAmigavel(m.dataHora) to "${m.valor.toLong()}/${par?.valor?.toLong() ?: "—"} mmHg · ${origem(m)}"
             }
             Historico(
@@ -164,6 +165,19 @@ class SinaisViewModel(private val repositorio: CidadaoRepository) : ViewModel() 
         listOf(Serie(nome, l.map { it.valor }, l.map { it.dataHora })),
         l.asReversed().map { dataAmigavel(it.dataHora) to "${formatar(it.valor)} $un · ${origem(it)}" },
     )
+
+    // A sistólica e a diastólica chegam como duas medições; o horário pode diferir em alguns segundos
+    // (ex.: duas chamadas à API). Pareia com a diastólica mais próxima, até 2 minutos de diferença.
+    private fun parDiastolica(s: MedicaoResumo, d: List<MedicaoResumo>): MedicaoResumo? {
+        d.firstOrNull { it.dataHora == s.dataHora }?.let { return it }
+        return try {
+            val t = java.time.LocalDateTime.parse(s.dataHora)
+            d.minByOrNull { abs(java.time.Duration.between(t, java.time.LocalDateTime.parse(it.dataHora)).seconds) }
+                ?.takeIf { abs(java.time.Duration.between(t, java.time.LocalDateTime.parse(it.dataHora)).seconds) <= 120 }
+        } catch (_: Exception) {
+            null
+        }
+    }
 
     private fun origem(m: MedicaoResumo) = if (m.origem == "IOT") "aparelho" else "você"
     private fun formatar(v: Double) = if (v % 1.0 == 0.0) v.toLong().toString() else v.toString()

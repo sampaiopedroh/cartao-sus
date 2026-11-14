@@ -238,7 +238,10 @@ private fun CartaoAviso(alerta: AlertaResumo, onConfirmar: () -> Unit, onVerUnid
     val critico = alerta.severidade == "CRITICA"
     val pendente = alerta.statusEnvio == "PENDENTE"
     Aviso(
-        texto = alerta.mensagem + "\n" + dataAmigavel(alerta.criadoEm),
+        texto = alerta.mensagem + "\n" + dataAmigavel(alerta.criadoEm) +
+            if (alerta.tipo == "PRESSAO_CRITICA" || alerta.tipo == "GLICEMIA_CRITICA")
+                "\nEste aviso não é um diagnóstico: ele orienta você a procurar uma unidade de saúde."
+            else "",
         tom = if (critico) TomAviso.ERRO else TomAviso.ATENCAO,
         acao = if (pendente) ({
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
