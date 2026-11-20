@@ -14,7 +14,7 @@
 
 Repositório: <https://github.com/sampaiopedroh/cartao-sus>
 
-Vídeo pitch: **[PENDENTE: link público]**
+Vídeo pitch: **https://www.youtube.com/watch?v=YBFnAWXnCpQ**
 
 Documento de entrega com as seis partes do projeto (banco de dados, API, testes, aplicativo móvel, segurança e simulação de IoT) e anexos.
 
@@ -904,7 +904,7 @@ Os arquivos nunca passam pela API: só o app e o Android os enviam.
 ## Repositório e vídeo
 
 - Repositório: <https://github.com/sampaiopedroh/cartao-sus>
-- Vídeo pitch: **[PENDENTE: link público]**
+- Vídeo pitch: **https://www.youtube.com/watch?v=YBFnAWXnCpQ**
 
 ## Declaração de uso de IA
 
@@ -920,7 +920,7 @@ Como o grupo conduziu e validou o trabalho:
 - Os testes (unitários, de contrato, de integração e manuais) foram executados em ambiente real: banco no Docker, API local e aplicativo no emulador Android. Os resultados estão em `docs/evidencia-testes/`.
 - As decisões que mudaram ao longo do projeto estão em `docs/adr/`.
 
-*Texto sujeito à confirmação final do grupo e à regra da disciplina sobre uso de IA.*
+*Declaração confirmada pelo grupo.*
 
 ## Limitações conhecidas
 

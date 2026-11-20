@@ -85,7 +85,7 @@ def montar():
 
 Repositório: <https://github.com/sampaiopedroh/cartao-sus>
 
-Vídeo pitch: **[PENDENTE: link público]**
+Vídeo pitch: **https://www.youtube.com/watch?v=YBFnAWXnCpQ**
 
 Documento de entrega com as seis partes do projeto (banco de dados, API, testes, aplicativo móvel, segurança e simulação de IoT) e anexos.
 
@@ -181,7 +181,7 @@ A ideia do produto é compartilhar as informações por NFC. Por limitação da 
     ia = secao(readme, "## Declaração de uso de IA").replace("## ", "## ", 1)
     adr = ler("docs/adr/ADR-nfc-compartilhamento.md").split("\n", 1)[1]
     lim = secao(ler("docs/evidencia-testes/RELATORIO.md"), "## Limitações conhecidas")
-    partes.append("# Anexos\n\n## Repositório e vídeo\n\n- Repositório: <https://github.com/sampaiopedroh/cartao-sus>\n- Vídeo pitch: **[PENDENTE: link público]**\n\n"
+    partes.append("# Anexos\n\n## Repositório e vídeo\n\n- Repositório: <https://github.com/sampaiopedroh/cartao-sus>\n- Vídeo pitch: **https://www.youtube.com/watch?v=YBFnAWXnCpQ**\n\n"
                   + ia + "\n\n" + lim.replace("## ", "## ", 1) + "\n\n## Decisão: compartilhamento sem NFC real\n" + rebaixar(adr, 1))
 
     return "\n\n".join(partes) + "\n"
