@@ -1,6 +1,6 @@
 # O que falta para concluir o trabalho
 
-Situação em 11/11/2026. Prazo de entrega na plataforma: **19/11/2026, até 23h55, sem prorrogação**.
+Situação em 19/11/2026 (link do vídeo já inserido no README, no .txt e no PDF). Prazo de entrega na plataforma: **19/11/2026, até 23h55, sem prorrogação**.
 
 ## Já concluído
 

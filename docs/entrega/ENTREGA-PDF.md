@@ -681,7 +681,28 @@ Implementação: `[Authorize(Roles = "ADMIN")]` nos controllers e verificação 
 
 # Parte 6 — Simulação de IoT
 
-Dois sensores simulados em Python. Cada um envia dados à API, e a API dispara uma regra de negócio que aparece no app do cidadão.
+Dois sensores simulados. Cada um envia dados à API, e a API dispara uma regra de negócio que aparece no app do cidadão.
+
+Há **duas formas de rodar o tensiômetro**, e as duas chegam à mesma API:
+
+| Forma | Como funciona | Precisa de internet? | Seção |
+|---|---|---|---|
+| **A. Script Python (REST)** | `tensiometro.py` chama a API direto | Não | [Como executar](#como-executar) |
+| **B. Wokwi + HiveMQ (MQTT)** | Projeto no Wokwi (ESP32 simulado) publica em um broker MQTT (HiveMQ), e a ponte `ponte_mqtt.py` repassa à API. **Exige subir o projeto no Wokwi e ter um broker acessível** | Sim (Wokwi e HiveMQ) | [Opção B](#opção-b-wokwi--hivemq-mqtt) |
+
+O terminal NFC só existe como script Python (forma A).
+
+### Quem é quem: João, Maria e os dispositivos
+
+Os dispositivos IoT não são genéricos: cada um está cadastrado no banco (`TB_DISPOSITIVO_IOT`) com um vínculo.
+
+| Dispositivo | Vínculo | Consequência |
+|---|---|---|
+| **Tensiômetro** | **João Pereira Santos** (cidadão 2, CNS `182345678901234`, e-mail `joao.pereira@cartaosus.demo`) | Toda leitura do tensiômetro, pelo script ou pelo Wokwi, é gravada **na conta do João**. A API descobre o cidadão pela `X-API-KEY`, por isso a leitura não leva CNS. |
+| **Terminal NFC da UBS** (CNES 9186492) | Unidade 1, sem cidadão | Atende qualquer CNS (João ou Maria). |
+| **Terminal NFC da UPA** (CNES 8530378) | Unidade 2, sem cidadão | Atende qualquer CNS (João ou Maria). |
+
+A **Maria** (cidadã 1, CNS `898000000000000`) **não tem tensiômetro**. Para mostrar alerta de pressão, entre no app como **João** (senha em `SENHA_DEMO` no `.env`). Os dados de pressão da Maria entram só pelo app ("Registrar medição") ou pelo Swagger com o token dela. Ela é usada nos testes do terminal NFC e do compartilhamento de documentos (final deste arquivo).
 
 ### Sensores
 
@@ -767,9 +788,88 @@ Códigos de saída: `0` se a API aceitou tudo, `1` se alguma leitura foi recusad
 
 Variáveis: `API_URL` (padrão `http://localhost:8080`), `IOT_KEY_TERMINAL_UBS`, `IOT_KEY_TERMINAL_UPA`, `IOT_KEY_TENSIOMETRO`. Os scripts leem essas variáveis do `.env` quando elas não estão no ambiente.
 
+### Opção B: Wokwi + HiveMQ (MQTT)
+
+O tensiômetro vira um **ESP32 simulado no [Wokwi](https://wokwi.com)**, com dois potenciômetros (sístole e diástole) e um botão "Medir". O ESP32 publica a leitura por MQTT no broker público do HiveMQ. Como a API só fala REST e o Wokwi roda na nuvem (não alcança o `localhost`), uma **ponte** (`ponte_mqtt.py`) roda na sua máquina, assina o tópico e repassa cada leitura à API:
+
+```
+Wokwi (ESP32) → broker.hivemq.com (MQTT) → iot/ponte_mqtt.py → POST /api/v1/telemetria/sinais-vitais → app do João
+   nuvem               nuvem                   seu computador                  localhost:8080
+```
+
+A regra do alerta (sístole acima de 180 ou diástole acima de 110) continua na API. O ESP32 só envia números, e o LED vermelho do circuito é apenas um indicador local.
+
+#### O que precisa estar no ar (os três ao mesmo tempo)
+
+> **Atenção:** na forma B nada funciona sozinho. É preciso subir o projeto no Wokwi e ter um broker MQTT acessível, além da API.
+
+| # | O que | Onde roda | Como ficar pronto |
+|---|---|---|---|
+| 1 | **Projeto no Wokwi** (o ESP32 simulado) | Nuvem do Wokwi, no navegador | Criar o projeto com os arquivos de `iot/wokwi/` e clicar em **Play**. Se a aba for fechada ou a simulação parar, ninguém publica leituras |
+| 2 | **Broker MQTT** | Internet | Usamos o broker público do HiveMQ (`broker.hivemq.com:1883`): não precisa instalar nada, mas ele precisa estar acessível. Para usar outro broker, ele tem que ser alcançável **pela internet** (o Wokwi roda na nuvem e não enxerga o seu `localhost`), e o endereço deve ser trocado no `sketch.ino` e na ponte (`MQTT_HOST`) |
+| 3 | **API, banco e ponte** | Seu computador | Subir o banco e a API (README do backend) e rodar `ponte_mqtt.py` |
+
+Se faltar qualquer um dos três, a leitura se perde sem aviso: sem Wokwi não há publicação, sem broker a mensagem não chega e sem ponte ela nunca vai à API.
+
+#### Passo a passo
+
+**1. Prepare a máquina** (uma vez, na pasta `cartao-sus/`). Faça os passos 1 a 3 de [Como executar](#como-executar): instalar dependências (inclui `paho-mqtt`), gerar as chaves e cadastrar os dispositivos no banco. Sem o passo 3 a ponte recebe HTTP 401.
+
+**2. Monte o circuito no Wokwi**
+1. Em [wokwi.com](https://wokwi.com), crie um projeto **ESP32** (Arduino).
+2. Substitua o conteúdo dos arquivos do projeto pelos de `iot/wokwi/`: `sketch.ino`, `diagram.json` e `libraries.txt` (esta biblioteca é a PubSubClient).
+3. Clique em **Play**. O monitor serial deve mostrar `Conectando ao HiveMQ... ok`.
+
+**3. Ligue a ponte** (API no ar). **Ligue antes de apertar o botão**: o MQTT não guarda mensagens para quem ainda não assinou.
+
+```bash
+iot/.venv/bin/python iot/ponte_mqtt.py
+```
+
+A ponte imprime `ponte ligada: broker.hivemq.com:1883 | tópico ...` e fica aguardando. Para encerrar, `Ctrl+C`.
+
+**4. Abra o app como João**: e-mail `joao.pereira@cartaosus.demo`, senha em `SENHA_DEMO` do `.env`, aba **Saúde**. O gráfico atualiza sozinho a cada poucos segundos.
+
+**5. Envie leituras pelo Wokwi**
+- Potenciômetro da esquerda = **sístole** (90 a 220 mmHg). Potenciômetro da direita = **diástole** (50 a 140 mmHg). Arraste o botão do potenciômetro para girá-lo.
+- Aperte o **botão verde** para enviar a leitura. O monitor serial mostra `Medicao 120/79 mmHg -> enviada`.
+- Valores sugeridos para a demonstração:
+
+| Leitura | Valores aproximados | Resultado |
+|---|---|---|
+| Baixa | 100/65 | Registrada, sem alerta |
+| Normal | 120/80 | Registrada, sem alerta |
+| Alarme | acima de 180 ou 110 (ex.: 190/120) | Registrada, alerta `PRESSAO_CRITICA` |
+
+**6. Confira o resultado**
+- No terminal da ponte: `leitura recebida: 190/120 mmHg`, `HTTP 201` nas duas chamadas e a linha `ALERTA: Alerta de Pressão Crítica: Procure a UPA mais próxima`.
+- No app: o gráfico ganha os pontos (aparece a partir de duas leituras) e a lista mostra "aparelho". Na aba **Início**, em **Avisos**, aparece o alerta com a orientação de procurar uma unidade de saúde.
+
+#### Detalhes do funcionamento
+
+- **Tópico MQTT:** `gateminds-cartaosus-7f3k/tensiometro/leitura`. Precisa ser **idêntico** no `sketch.ino` e na ponte. Para trocar na ponte, use a variável `MQTT_TOPICO`.
+- **Mensagem publicada:** `{"dispositivo":"tensiometro","sistolica":120,"diastolica":80}`. A ponte ignora mensagens que não sejam esse JSON e valores absurdos (sístole fora de 50 a 300, diástole fora de 30 a 200), e continua ouvindo.
+- **O que a ponte envia à API:** duas chamadas por leitura (`PRESSAO_SISTOLICA` e `PRESSAO_DIASTOLICA`), com a `X-API-KEY` do tensiômetro, que pertence ao João.
+- **Variáveis da ponte (todas opcionais):** `MQTT_HOST` (padrão `broker.hivemq.com`), `MQTT_PORTA` (`1883`), `MQTT_TOPICO`, `API_URL` (`http://localhost:8080`) e `IOT_KEY_TENSIOMETRO` (lida do `.env`).
+- **Broker público, sem autenticação:** qualquer pessoa que conheça o tópico pode ler ou publicar nele. Os dados são fictícios, e o sufixo `7f3k` evita colisão com outros usuários. Quem publicar nesse tópico com a ponte ligada gera leituras na conta do João, então não divulgue o tópico.
+- **Opcional, para depurar:** no [cliente web do HiveMQ](https://www.hivemq.com/demos/websocket-client/), conecte no host padrão e assine o tópico para ver as mensagens chegando.
+
+#### Problemas comuns
+
+| Sintoma | Causa provável | O que fazer |
+|---|---|---|
+| Wokwi não passa de `Conectando ao HiveMQ...` | Sem internet ou broker fora do ar | Confira a conexão e reinicie a simulação |
+| Wokwi mostra `enviada`, mas a ponte não imprime nada | Ponte ligada depois do clique, ou tópico diferente | Ligue a ponte e aperte o botão de novo. Compare o tópico nos dois lados |
+| Ponte mostra `HTTP 401` | Chave do tensiômetro ausente no `.env` ou dispositivo não cadastrado | Refaça os passos 2 e 3 de [Como executar](#como-executar) |
+| Ponte encerra com `ERRO de conexão` | API fora do ar | Suba o banco e a API (README do backend) |
+| Ponte mostra `mensagem ignorada` | Payload fora do formato esperado | Use o `sketch.ino` de `iot/wokwi/` |
+| App não mostra a leitura | Está logado como Maria, ou não está na aba Saúde | Entre como João. O gráfico atualiza em até 4 s e os avisos do Início em até 5 s |
+
 ### Limitações
 
-- **Simulação por REST, não por MQTT.** O edital aceita script, JSON ou MQTT simulado. Optamos por REST para usar o mesmo contrato da API.
+- **Dois modos de simulação.** Scripts Python por REST (offline) e Wokwi com MQTT (HiveMQ público) via ponte. A API só fala REST; a ponte faz a tradução.
+- **Um único cidadão por tensiômetro.** O dispositivo é vinculado ao João; leituras do Wokwi ou do script nunca vão para a Maria.
+- **Wokwi depende de internet e do broker público.** Se isso falhar durante a avaliação, use a forma A (script Python), que roda offline.
 - **Sem sensor físico.** O cartão é representado pelo CNS digitado, e a leitura NFC é simulada.
 - **Um alerta por leitura de pressão.** Sístole e diástole geram cada um o seu registro. Quando as duas passam do limiar, aparecem dois alertas para a mesma medição.
 - **Código TOTP no modo `--app`.** A geração usa o relógio da máquina onde o script roda.

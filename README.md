@@ -121,7 +121,7 @@ Como o grupo conduziu e validou o trabalho:
 
 ## Vídeo pitch
 
-*Link público: **[PENDENTE]**. O roteiro e o checklist de gravação estão em [docs/roteiro-pitch.md](docs/roteiro-pitch.md). O link entra aqui e no arquivo `.txt` de entrega.*
+*Link público: **https://www.youtube.com/watch?v=YBFnAWXnCpQ**. O roteiro está em [docs/roteiro-pitch.md](docs/roteiro-pitch.md). Vídeos de apoio (API, app, acessibilidade, alertas e IoT com Wokwi/MQTT) em [docs/videos/](docs/videos/).*
 
 ## Resultados dos testes
 
