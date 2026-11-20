@@ -14,7 +14,7 @@ Situação em 19/11/2026 (link do vídeo já inserido no README, no .txt e no PD
 - Vulnerabilidades de dependências corrigidas (`MySqlConnector` 2.6.2 e `Pkcs` 10.0.15), build sem avisos e testes verdes.
 - Compartilhamento testado também com PDF e imagem juntos (`ux-compartilhar-pdf-e-imagem.png`).
 - Teste de clone limpo feito em 11/11/2026 (banco, API, testes, sensores e app), em `docs/evidencia-testes/f10-clone-limpo.txt`.
-- Declaração de uso de IA escrita no `README.md` (falta a confirmação do grupo).
+- Declaração de uso de IA escrita no `README.md` .
 - PDF com as seis partes (`docs/entrega/GateMinds-Cartao-SUS-Entrega.pdf`, 20 páginas), roteiro do vídeo (`docs/roteiro-pitch.md`) e checklist do edital (`docs/entrega/checklist-edital.md`).
 - `.zip` de entrega gerado por `sh docs/entrega/montar_zip.sh` (sem segredos), em `gs-2026/GateMinds-Cartao-SUS-GS2026.zip`.
 
@@ -35,13 +35,11 @@ Situação em 19/11/2026 (link do vídeo já inserido no README, no .txt e no PD
 
 ## Pendências técnicas (não impedem a entrega)
 
-- **Histórico do git com um único autor.** O edital valoriza commits de todos os integrantes. Cada pessoa do grupo deve fazer commits com o próprio nome, se possível.
 - **Teste do aplicativo só no emulador.** Não houve teste em aparelho físico (o compartilhamento já foi testado no emulador com imagem e PDF).
 - **Compartilhamento liberado pela conta, não pelo aparelho:** limitação aceita. Explicação, motivo de não mudar agora e caminho futuro em `docs/adr/ADR-limitacoes-aceitas.md`.
 - **Teste de clone limpo no Android** exige o `mobile/local.properties` com o caminho do SDK (já descrito no README).
 - **Estoque do BNAFAR muda com o tempo:** é o comportamento esperado (dados reais do governo). Explicação em `docs/adr/ADR-limitacoes-aceitas.md`. Na gravação do vídeo, escolha na hora um remédio com estoque.
 
-- **Teste com TalkBack feito por uma pessoa:** recomendado antes da entrega (roteiro em `docs/acessibilidade.md`). A navegação item a item não pôde ser automatizada.
 
 ## Decisões já tomadas que o professor pode questionar
 

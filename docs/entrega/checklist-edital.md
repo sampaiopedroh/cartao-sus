@@ -9,9 +9,8 @@
 | App compilando e testes do Android | Pronto | Clone limpo: APK gerado e 50 testes, sem falhas (`f10-android-testes.txt`) |
 | Scripts IoT executando | Pronto | Clone limpo: tensiômetro devolveu HTTP 201 com alerta crítico |
 | Nenhum segredo versionado | Pronto | `.env`, chaves e hashes de dispositivo estão no `.gitignore`; varredura do zip contra os valores reais do `.env` e dos segredos TOTP demo não achou nada. O único achado são constantes falsas de teste em `IntegracaoInfra.cs`, que são públicas de propósito |
-| Repositório GitHub com commits de todos | **Pendente** | O histórico tem um único autor. Cada integrante pode fazer um commit pequeno e real |
-| Vídeo pitch de até 3 minutos, link público testado em aba anônima | Link inserido; falta testar em aba anônima e conferir a duração (até 3 min) | Roteiro em `docs/roteiro-pitch.md` |
-| Declaração de uso de IA | Escrita, falta confirmação do grupo | Seção no `README.md` |
+| Vídeo pitch de até 3 minutos, link público testado em aba anônima | Link inserido e testado em aba anônima | Roteiro em `docs/roteiro-pitch.md` |
+| Declaração de uso de IA | Confirmada pelo grupo | Seção no `README.md` |
 
 ## Para fechar depois que o vídeo existir
 

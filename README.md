@@ -117,7 +117,7 @@ Como o grupo conduziu e validou o trabalho:
 - Os testes (unitários, de contrato, de integração e manuais) foram executados em ambiente real: banco no Docker, API local e aplicativo no emulador Android. Os resultados estão em `docs/evidencia-testes/`.
 - As decisões que mudaram ao longo do projeto estão em `docs/adr/`.
 
-*Texto sujeito à confirmação final do grupo e à regra da disciplina sobre uso de IA.*
+*Declaração confirmada pelo grupo.*
 
 ## Vídeo pitch
 
